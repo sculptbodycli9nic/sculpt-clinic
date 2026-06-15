@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#080808">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sculpt Clinic">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informe Clínico – Sculpt Body Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" onerror="this.disabled=true">
+<style>
+:root{--bg:#080808;--s1:#111;--s2:#181818;--s3:#1e1e1e;--b1:#2a2a2a;--b2:#333;--t1:#e8e8e8;--t2:#aaa;--t3:#666;--gold:#c8a96e;--green:#22c55e;--red:#ef4444;--r:10px;--rl:14px;--font:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--fdisp:'DM Serif Display',Georgia,serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+input,textarea,select,button{font-family:var(--font)}
+
+/* ── WELCOME ── */
+#welcomeView{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;background:radial-gradient(ellipse 130% 70% at 50% -10%,#1c1408 0%,var(--bg) 65%);text-align:center}
+.w-logo{height:58px;margin-top:40px;margin-bottom:36px}
+.w-title{font-family:var(--fdisp);font-size:clamp(26px,5vw,42px);font-weight:400;margin-bottom:7px;letter-spacing:-0.5px}
+.w-sub{font-size:11px;color:var(--t3);letter-spacing:3.5px;text-transform:uppercase;margin-bottom:36px}
+.w-line{width:40px;height:1px;background:var(--gold);margin:0 auto 40px}
+.w-label{font-size:11px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.w-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:28px}
+.w-card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:28px 32px;cursor:pointer;transition:all .2s;width:200px;text-align:center}
+.w-card:hover{border-color:var(--gold);background:#141208}
+.w-card-ico{font-size:32px;margin-bottom:12px}
+.w-card-title{font-family:var(--fdisp);font-size:18px;font-weight:400;color:var(--t1);margin-bottom:5px}
+.w-card-sub{font-size:11px;color:var(--t3)}
+.w-drafts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--b2);border-radius:var(--r);padding:10px 22px;font-size:12px;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.w-note{margin-top:24px;font-size:11px;color:var(--t3)}
+
+/* ── TOPBAR ── */
+#topbar{background:var(--s1);border-bottom:1px solid var(--b1);padding:11px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;gap:10px}
+#topbar img{height:40px}
+.tb-type{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);background:#1a1508;border:1px solid #3a2f18;border-radius:20px;padding:4px 12px}
+.tb-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.save-badge{font-size:11px;color:var(--green);opacity:0;transition:opacity .4s;display:flex;align-items:center;gap:5px}
+.save-badge.on{opacity:1}
+.btn-tb{background:var(--gold);color:#080808;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-tb.o{background:transparent;color:var(--t2);border:1px solid var(--b2);font-weight:400}
+.btn-tb.o:hover{border-color:var(--gold);color:var(--gold)}
+.btn-tb.danger{background:transparent;color:var(--red);border:1px solid #2a1010}
+
+/* ── STEP NAV ── */
+#stepNav{background:var(--s1);border-bottom:1px solid var(--b1);padding:0 20px;display:flex;overflow-x:auto;scrollbar-width:none}
+#stepNav::-webkit-scrollbar{display:none}
+.stab{padding:13px 16px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:7px}
+.stab:hover{color:var(--t2)}
+.stab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.stab.done{color:var(--t2)}
+.snum{width:17px;height:17px;border-radius:50%;background:var(--s3);color:var(--t3);font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.stab.active .snum{background:var(--gold);color:#080808}
+.stab.done .snum{background:var(--green);color:#080808}
+
+/* ── FORM ── */
+#formView{display:none}
+.fc{max-width:760px;margin:0 auto;padding:36px 24px 80px}
+.sp{display:none}
+.sp.active{display:block}
+.sh{margin-bottom:26px}
+.sh h2{font-family:var(--fdisp);font-size:24px;font-weight:400;margin-bottom:4px}
+.sh p{font-size:12px;color:var(--t3)}
+.sec{margin-bottom:26px}
+.sec-title{font-size:10px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:13px;border-bottom:1px solid var(--b1);padding-bottom:7px}
+.row{display:flex;flex-wrap:wrap;gap:14px}
+.f{width:100%;margin-bottom:0}
+.f.h{width:calc(50% - 7px);min-width:190px;flex-grow:1}
+.f label{display:block;font-size:11px;color:var(--t2);margin-bottom:5px;letter-spacing:.7px;text-transform:uppercase}
+.f input,.f textarea,.f select{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);color:var(--t1);padding:10px 13px;font-size:13px;transition:border-color .2s;resize:vertical}
+.f input:focus,.f textarea:focus,.f select:focus{outline:none;border-color:var(--gold)}
+.f select option{background:var(--s2)}
+.chk{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2);cursor:pointer;margin-top:8px}
+.chk input{accent-color:var(--gold);width:15px;height:15px}
+
+/* ── PRESETS ── */
+.pre-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.pb{background:var(--s2);border:1px solid var(--b1);color:var(--t2);border-radius:20px;padding:5px 13px;font-size:11px;cursor:pointer;transition:all .2s}
+.pb:hover,.pb.sel{border-color:var(--gold);color:var(--gold);background:#1a1508}
+
+/* ── UPLOAD ── */
+.uz{border:2px dashed var(--b2);border-radius:var(--rl);min-height:148px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--s2);overflow:hidden;position:relative;transition:border-color .2s}
+.uz:hover{border-color:var(--gold)}
+.uz img{width:100%;max-height:230px;object-fit:cover}
+.uz span{color:var(--t3);font-size:12px;text-align:center;padding:0 10px;margin-top:6px}
+.uz input[type=file]{display:none}
+.uz-icon{opacity:.4;margin-bottom:4px}
+
+/* ── FOTO GRUPO ── */
+.fg{background:var(--s1);border-radius:var(--rl);padding:15px;border:1px solid var(--b1);margin-bottom:11px}
+.fg-head{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.fg-head input{flex:1;background:var(--bg);border:1px solid var(--b1);border-radius:8px;color:var(--t1);padding:8px 12px;font-size:13px}
+.fg-head input:focus{outline:none;border-color:var(--gold)}
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ftag{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;font-weight:600}
+
+/* ── TABLES ── */
+.tw{border-radius:var(--rl);overflow:hidden;border:1px solid var(--b1)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--s2)}
+th{padding:10px 14px;text-align:left;color:var(--t3);font-weight:600;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--b1)}
+td{padding:8px 14px;border-bottom:1px solid var(--s3)}
+tr:last-child td{border-bottom:none}
+td input{background:var(--s2);border:1px solid var(--b1);border-radius:6px;color:var(--t1);padding:6px 9px;width:95px;font-size:13px}
+td input:focus{outline:none;border-color:var(--gold)}
+td input.wide{width:135px}
+.dg{color:var(--green);font-weight:700}
+.dr{color:var(--red);font-weight:700}
+.dn{color:var(--t3);font-weight:600}
+
+/* ── BUTTONS ── */
+.btn-add{background:var(--s2);border:1px dashed var(--b2);color:var(--t3);border-radius:var(--r);padding:9px 16px;cursor:pointer;font-size:12px;margin-top:10px;transition:all .2s}
+.btn-add:hover{border-color:var(--gold);color:var(--gold)}
+.btn-full{width:100%;background:var(--gold);color:#080808;border:none;border-radius:var(--r);padding:14px;cursor:pointer;font-size:14px;font-weight:700;margin-top:14px}
+.btn-full:hover{background:#d4b57a}
+.btn-rem{background:none;border:1px solid var(--b2);color:var(--t3);border-radius:7px;padding:5px 11px;cursor:pointer;font-size:11px;transition:all .2s}
+.btn-rem:hover{color:var(--red);border-color:#3a1414}
+.btn-del{background:none;border:none;color:var(--t3);cursor:pointer;padding:3px 7px;font-size:15px}
+.btn-del:hover{color:var(--red)}
+.star{color:var(--gold);transition:opacity .15s}
+.star:hover{opacity:1!important}
+.snav{display:flex;gap:10px;margin-top:30px}
+.btn-prev{background:var(--s2);color:var(--t2);border:1px solid var(--b1);border-radius:var(--r);padding:12px 22px;cursor:pointer;font-size:13px}
+.btn-next{flex:1;background:var(--gold);color:#080808;border:none;border-radius:var(--r);padding:12px;cursor:pointer;font-size:13px;font-weight:700}
+
+/* ── CARDS ── */
+.card{background:var(--s1);border-radius:var(--rl);padding:18px 22px;border:1px solid var(--b1);margin-bottom:14px}
+.card.gold-card{border-color:#3a2f18;background:#120f08}
+.cl{font-size:10px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:9px}
+.cl.g{color:var(--gold)}
+
+/* ── PREVIEW ── */
+#previewView{display:none}
+#prevBar{background:var(--s1);border-bottom:1px solid var(--b1);padding:11px 24px;display:flex;gap:9px;align-items:center;position:sticky;top:0;z-index:200}
+#prevTitle{flex:1;font-size:13px;font-weight:600}
+
+/* ── REPORT ── */
+#reportDoc{max-width:900px;margin:0 auto}
+.rh{background:#080808;padding:28px 44px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #1e1e1e}
+.rh-badge{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);border:1px solid #3a2f18;border-radius:20px;padding:3px 10px;margin-bottom:10px;display:inline-block}
+.rh-r{text-align:right}
+.rname{font-family:var(--fdisp);font-size:26px;font-weight:400;margin-bottom:5px}
+.rmeta{font-size:12px;color:var(--t3);line-height:1.9}
+.rmeta span{color:var(--t2)}
+.rb{padding:30px 44px;background:#080808}
+.rl2{font-size:10px;letter-spacing:3.5px;color:var(--t3);text-transform:uppercase;margin-bottom:12px;padding-left:11px;border-left:2px solid var(--gold)}
+.rc{background:#111;border-radius:12px;padding:18px 22px;margin-bottom:18px;border:1px solid #1e1e1e}
+.rc.green{background:#0a1a0a;border-color:#1a3018}
+.ri{display:flex;flex-wrap:wrap;gap:18px}
+.ri .k{color:var(--t3);font-size:11px;display:block;margin-bottom:2px}
+.ri .v{font-weight:700;font-size:14px}
+.rtxt{font-size:13px;line-height:1.85;color:#ccc;white-space:pre-wrap}
+.rfg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rfg img{width:100%;border-radius:10px;object-fit:cover;max-height:320px}
+.rfl{font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:7px;font-weight:600}
+.ran{font-size:11px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin:16px 0 10px;padding-left:9px;border-left:2px solid #2a2a2a}
+.rtw{border-radius:10px;overflow:hidden;border:1px solid #1e1e1e}
+.rt{width:100%;border-collapse:collapse;font-size:13px}
+.rt thead tr{background:#161616}
+.rt th{padding:10px 15px;text-align:left;color:#555;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid #1e1e1e}
+.rt td{padding:8px 15px;border-bottom:1px solid #141414;color:#ccc}
+.rt tr:last-child td{border-bottom:none}
+.rt td:first-child{color:var(--t1);font-weight:600}
+.rconc{background:linear-gradient(135deg,#111,#0e0d0a);border:1px solid #2a2518;border-radius:12px;padding:20px 24px;margin-bottom:18px}
+.rfoot{border-top:1px solid #1e1e1e;margin-top:36px;padding-top:20px;display:flex;justify-content:space-between;align-items:center}
+.rfoot img{height:40px}
+.rfoot-r{text-align:right;font-size:11px;color:#333;line-height:1.7}
+.rfirma{border-top:1px solid #2a2a2a;margin-top:32px;padding-top:18px;display:flex;justify-content:flex-end}
+.rfirma-box{text-align:center;width:200px}
+.rfirma-line{border-top:1px solid #444;margin-bottom:7px;padding-top:7px;font-size:11px;color:var(--t3)}
+
+@media print{
+  #welcomeView,#topbar,#stepNav,#prevBar,#formView{display:none!important}
+  #previewView{display:block!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#080808!important}
+  .rb,.rh{padding:22px 32px}
+  .rfoot-r{color:#555!important}
+}
+@media(max-width:600px){
+  .f.h{width:100%}
+  .fg-grid,.rfg{grid-template-columns:1fr}
+  .rh{flex-direction:column;gap:14px;padding:20px}
+  .rh-r{text-align:left}
+  .rb{padding:20px}
+  .w-card{width:160px;padding:20px 16px}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="window.jsPDFfailed=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" onerror="window.h2cfailed=true"></script>
+</head>
+<body>
+
+<!-- ════════════════ WELCOME ════════════════ -->
+<div id="welcomeView">
+  <img class="w-logo" id="wLogo" src="" alt="Sculpt Body Clinic">
+  <div class="w-title">Informes Clínicos</div>
+  <div class="w-sub">Sculpt Body Clinic</div>
+  <div style="font-size:11px;color:#555;letter-spacing:1px;margin-bottom:28px">Sistema creado · Directora Clínica Bárbara González</div>
+  <div class="w-line"></div>
+  <div class="w-label">Selecciona el tipo de informe</div>
+  <div class="w-cards">
+    <div class="w-card" onclick="startMode('corporal')">
+      <div class="w-card-ico">🏋️</div>
+      <div class="w-card-title">Corporal</div>
+      <div class="w-card-sub">Mediciones · InBody · Silueta</div>
+    </div>
+    <div class="w-card" onclick="startMode('facial')">
+      <div class="w-card-ico">✨</div>
+      <div class="w-card-title">Facial</div>
+      <div class="w-card-sub">Piel · Ángulos · Protocolo</div>
+    </div>
+    <div class="w-card" onclick="startMode('medico')">
+      <div class="w-card-ico">💉</div>
+      <div class="w-card-title">Médico</div>
+      <div class="w-card-sub">Inyectables · La Dehesa</div>
+    </div>
+  </div>
+  <div class="w-drafts">
+    <button class="btn-ghost" id="btnResC" style="display:none" onclick="resumeMode('corporal')">↩ Continuar borrador Corporal</button>
+    <button class="btn-ghost" id="btnResF" style="display:none" onclick="resumeMode('facial')">↩ Continuar borrador Facial</button>
+    <button class="btn-ghost" id="btnResM" style="display:none" onclick="resumeMode('medico')">↩ Continuar borrador Médico</button>
+  </div>
+  <p class="w-note">Datos guardados automáticamente en este navegador · Sin costos ni conexión requerida</p>
+
+</div>
+
+<!-- ════════════════ FORM VIEW ════════════════ -->
+<div id="formView">
+  <div id="topbar">
+    <img id="tbLogo" src="" alt="Sculpt">
+    <span class="tb-type" id="tbType">Corporal</span>
+    <div class="tb-right">
+      <span class="save-badge" id="saveBadge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#22c55e" stroke-width="2"/><path d="M8 12l3 3 5-5" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Guardado
+      </span>
+      <button class="btn-tb danger" onclick="confirmClear()">Limpiar</button>
+      <button class="btn-tb o" onclick="goHome()">← Inicio</button>
+      <button class="btn-tb" onclick="goToPreview()">Ver informe →</button>
+    </div>
+  </div>
+  <div id="stepNav"></div>
+  <div class="fc" id="formContent"></div>
+</div>
+
+<!-- ════════════════ PREVIEW VIEW ════════════════ -->
+<div id="previewView">
+  <div id="prevBar">
+    <button class="btn-tb o" onclick="showForm()">← Editar</button>
+    <div id="prevTitle">Informe Clínico</div>
+    <button class="btn-tb o" onclick="window.print()" title="Imprimir o guardar como PDF desde el navegador">🖨 Imprimir</button>
+    <button class="btn-tb" onclick="downloadPDF()" id="btnPDF" title="Descargar PDF directo">⬇ Descargar PDF</button>
+  </div>
+  <div id="reportDoc"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATOS DE CONTACTO POR SUCURSAL
+══════════════════════════════════════════ */
+const SUCURSALES = {
+  'San Miguel': {
+    direccion: 'Av. José Miguel Carrera (Gran Avenida) 4311, Local 203, San Miguel',
+    telefono: '+56 9 9568 4702',
+    wsp: 'https://wa.me/56995684702'
+  },
+  'Las Condes': {
+    direccion: 'Av. Las Condes 9460, Oficina 1504, Las Condes',
+    telefono: '+56 9 7494 9774',
+    wsp: 'https://wa.me/56974949774'
+  },
+  'El Golf': {
+    direccion: 'Hendaya 344, Las Condes',
+    telefono: '+56 9 4200 5281',
+    wsp: 'https://wa.me/56942005281'
+  },
+  'La Dehesa': {
+    direccion: 'Av. La Dehesa 516, Lo Barnechea',
+    telefono: '+56 9 7437 8508',
+    wsp: 'https://wa.me/56974378508'
+  },
+  'Antofagasta': {
+    direccion: 'Antonino Toro 878, Pulso Salud, Antofagasta',
+    telefono: '+56 9 9044 9658',
+    wsp: 'https://wa.me/56990449658'
+  }
+};
+const LOGO = `data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QEMRXhpZgAATU0AKgAAAAgAAgEyAAIAAAAUAAAAJodpAAQAAAABAAAAOgAAAAAyMDI2OjA2OjE0IDExOjMzOjU0AAALkAMAAgAAABQAAADEkAQAAgAAABQAAADYkBAAAgAAAAcAAADskBEAAgAAAAcAAAD0kBIAAgAAAAcAAAD8kpAAAgAAAAQwMDAAkpEAAgAAAAQwMDAAkpIAAgAAAAQwMDAAoAEAAwAAAAEAAQAAoAIABAAAAAEAAAQ4oAMABAAAAAEAAAH+AAAAADIwMjY6MDY6MTQgMTE6MzM6NTQAMjAyNjowNjoxNCAxMTozMzo1NAAtMDQ6MDAAAC0wNDowMAAALTA0OjAwAAD/7QB8UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAEQcAVoAAxslRxwCAAACAAIcAj8ABjExMzM1NBwCPgAIMjAyNjA2MTQcAjcACDIwMjYwNjE0HAI8AAsxMTMzNTQtMDQwMDhCSU0EJQAAAAAAELklIuVZe07c8Y8vzH2xuI//wgARCAH+BDgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAwIEAQUABgcICQoL/8QAwxAAAQMDAgQDBAYEBwYECAZzAQIAAxEEEiEFMRMiEAZBUTIUYXEjB4EgkUIVoVIzsSRiMBbBctFDkjSCCOFTQCVjFzXwk3OiUESyg/EmVDZklHTCYNKEoxhw4idFN2WzVXWklcOF8tNGdoDjR1ZmtAkKGRooKSo4OTpISUpXWFlaZ2hpand4eXqGh4iJipCWl5iZmqClpqeoqaqwtba3uLm6wMTFxsfIycrQ1NXW19jZ2uDk5ebn6Onq8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAABAgADBAUGBwgJCgv/xADDEQACAgEDAwMCAwUCBQIEBIcBAAIRAxASIQQgMUETBTAiMlEUQAYzI2FCFXFSNIFQJJGhQ7EWB2I1U/DRJWDBROFy8ReCYzZwJkVUkiei0ggJChgZGigpKjc4OTpGR0hJSlVWV1hZWmRlZmdoaWpzdHV2d3h5eoCDhIWGh4iJipCTlJWWl5iZmqCjpKWmp6ipqrCys7S1tre4ubrAwsPExcbHyMnK0NPU1dbX2Nna4OLj5OXm5+jp6vLz9PX29/j5+v/bAEMAAgICAgICAwICAwUDAwMFBgUFBQUGCAYGBgYGCAoICAgICAgKCgoKCgoKCgwMDAwMDA4ODg4ODw8PDw8PDw8PD//bAEMBAgMDBAQEBwQEBxALCQsQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEP/aAAwDAQACEQMRAAAB/P8A21bK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytScrUnK1JytSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW2VSd7H9f1+bu/TrV+Yu/TrV+Yu+xvkyqzbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbUnbVttW21bbVttW21K21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bovRP1Mr4h+lux+Uq+5fnH4f8ar9Bo/PrV+grr88NX7VK/G/6Wr3b44+5Po+vwr33H8PUnbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21Z2092r9K/nj63/ABHpkz2rbattq22rbal/RHzpq/c78uvpDt6/K/bVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21b6j+XPqOvvv8AGH9wvxBoe2rbattq22rbattq+pvv34C/QqvxRSUVbbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbUnbVttW21bbVttW21K21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW/T38xf2mrwj8zfqT5brbattq2yqTlJrbattq7X9pfwn/AFvr87vH/ub4Zrbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbak7attq22rbattq22pW2rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattquf3E/Cn9ma/L/x/9bfg6vA7D6c6OvEf1Y/Hr9Wq7D4j+0/jivqHr+V6GvCvzL/Qv5TrxTfaPzbXBfpfS/YVfIP5yfZvxlW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21J21bbVttW21bbVttSttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVu64XV+kn1n+FHr1fsJ4v5r9GV+JH65/kZ+mVfQPxh9Y/LFfT/ScjNfGt15/wDStfWieL+JK+0/gz5jqqMHattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattqTtq22rbattq22rbalbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq+tfuv4O+8q/GD9LPzR/Ravpb43+/vkyvWuj7ZjX5J/Xvw19s19Kfil+4v4eUnbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21J21bbVttW21bbVttSttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21el/sT+Ff19Vb83/tx8hUDyBlq+i/mKymvAf2F4/sa+ffzW6zka22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattqTtq22rbattq22rbalbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattqyk6vc/v38j9X7Kb8a9X7Kb8a9X6tfnf5rq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22pO2rbattq22rbattqVtq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22pO2rbattq22rbattqVtq22rbattq22rbattq22rbattq22rbattq22rbdPXMb9GPdK/HPfr94NX59a7pK2+kftGvyd37I+P1+Z29D9Jr5z36deP18S7fR1fOO/TrxGvjPfQn1tX5i77a+Ja22rb9KrCvzF36dNa/M/fUfzZVfv061fmLv061fmLv068pr4b21bX/6N1+Yu/TrV+Yu/Tfyivh/WVbWz/wC0q+Ht+vpa/H3fenxJVNt9v18Qb9OtX5i79OPNq+EN2FxXm+/TptX5na0rqRvvj0KvzF3rPk1bbVttW21bbVttW21bbVttW21bbVttW21bbUnbVttW21bbVttW21K21bbVttW21bbVttW21bbVttW21bbVttW21bbUv9VPy0/c6nG35Y1+p1V+Ufq1fKH0h8t/s7XfL3y/X1Bvyr+267v48520r9D/AJn+mPmevy1+1Piv7Ur9Dvk/6w+T68U/Rv8AOT9G6+afyz/Uz8s622r9xL6hvq2/Pn06vrj8/P0D8yr0tX5h+i1977UNX3zx8lclXg22rq/23/Ej9t62afjlX7Mb4e+4a+Mfzt/WP8+K+1PrDBo2/PCqr9JPnX3t/X4SfqX8a/ZVfSG3yVX1rvzb+4asPyR/aH5Gr131z8vP1Dr86/D/ANSfJq+kfPfRfzcr5MZ7VttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttRv2t/Ez6Er9XqXkvR6+fPjr9SEV+K37Wfm/+kFI/Eb9tvw1qtfsFVP2h8Wfadfof8z/AEx81V+WX2p8V/a1foZ8n/WHydXiv6N/nJ+jdfNP5Z/qZ+WdbbV+4l9Q31fjv6N+kNrTzh+4+Va/Mf2fxj2ev175LreSr8TEqTW21dX+2/4kftvSPCveKiqbrmT+vzQvvReFr9BvA/fPmqvyy21fp/8AUfyJ9d18L+seY+nV9IfnT+i350V8afUPy99EV+rXm/pHAV+M/wCwX45fVtfprtq4H8avrr42rbattq22rbattq22rbattq22rbattq22rbattqTtq22rbattq22rbalbattq22rbattq22rbattq22rbattq22rbattq3vHhX7HV+Vdr+w/FVy3s7R3Xwf8AaH5qexV90/nx+g+r8Nvtz7heV+Qfof39+SVftR571dvX4h/ox9Nua3xR9qfk1Xpv6N/nJ+jdfOX5l/uDFfh+y/cz4Or7VvqG+rNvyY8nr9R/zP47VvZ/GPZ6/Xvkut5KvxMSpNbbV1f7b/iR+29NPwy/dbga/LL9jeY6em/5c/pR+KtfuhS+eeu1+Olb+y6a5rrd53Xwd9S/mH+nlfSH59/oImvxa/Rz6L1b5v8Aof8AJ6vB7apsa/c5aC1+J3GddyNbbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttVl+lv5gav3Ntfwtv6/Z/4z+E6mjFaav0Q+vfwys6/c3iPyC52vpH5mTq+l/wBGvxOe1+6tL+MlJX2j8PJ1fXf6E/h9FfuFvw91fuF8O/D66/aK8/EFFepeVqTW21b2Hx5dft/yv406lDUmttq6n9mvw8XX7gb8PtX7f+dfkLq+hvnfau6/Sb8n11+7M/iGuv1R/NbzZFb9PfzCXX7gb8PtX7eeXfkomvof542rWFeqv2/X+HurquT2rbattq22rbattq22rbattq22rbattq22rbattqTtq22rbattq22rbalbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattqTtq22rbattq22rbalbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbatsShq+vPs2vx4H+3PkVflHvXbevC9+uHnlfmltq236W1+aW/XD8/68P36Ce1V+SO9u8Rrb7s+gq/JHfUPbV8Ub9cPluvjPT6RXmyv1G9wr8Skfsv8jV8Q5w3rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattqTtq22rbattq22rbalbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbat9i/IP7VV16t8d19ib8gfuGvaPz3ZIr9TfJ/WPJ6/HXbVv2M/HP9jK9W/K79Ufyur7C+j/nD6Przf8ff3K+M6ufrP5P+sK/Oz0fzj0evsz4k+2/iSvh/9hfjj79rbhvzSr9Zt+af0lXzL8ovmNbbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbV3X7Ufi3+0lC/D/wDb/wDDmqkwVVH0n82/SVfqd5P6x5PX467at+xn45/sZXq35Xfqj+V1fYX0f84fR9ZHCd9XnHo+1fnZ6P5x6PX2Z8SfbfxJXoX0z80fS9fBnwh9z/DFKUNdI21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbU5/bL8Rft6v0D+GvuXV+KX3d9f6vybt/0Z/PSv0/809L1fjVv2V1fij+rHknrVer/AJXfqj+V1fYX0f8AOH0fX5tfcPwHydfrZm7ivzs9H849Hr7M+I/tz4kqp+8fxP8A2Jqg/LP9kk1+Vn0z9eJr8Kmn1f8AKFbbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttSdtW21bbVttW21bbUrbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVttW21bbVnLbV9zfZX4nmr9y/MfyMr693P4Dq/ZXfjVq/ZXfjVq/QT0r8s9X7J/nL4Jq/SD3X8atX0Z857V95fUn406vq/vPhTV+yvyX8Pat675Fq/XL1/8Ln9ftV8jfA7enbTattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22pO2rbattq22rbattqVtq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22pO2rbattq22rbattqVtq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22pO2rbattq22rbattqVtq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22pO2rbattq22rbattqVtq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22rbattq22pO2rbattq22rbav//aAAgBAQABBQL/ANHGfD3gnevEb2/6n9lhj/2UXhh/7KLww/8AZReGH/sovDD336pNysxdWlzZS/8AI+WG13+6S7L9UF9Omw+rfwrYtKYLSHe/rS2LbJf9nPZv/ZzWj/2c1o4frl25Umy+I9o3+HdfDuzb093+qLZ7pO/+CN98O/8AI9eD/CN14pvdn2PbNitt58V7HsSNy+uVT3vx14h36H7thuF1ts9j9bm/wL2P609i3RX8Xu4fHv1cptIz/wAjvDEueXwxsUPh3Z/rG8dzbUqWeWdf8zWj8F+O73w7Pbzw39t9YvhkeHt5/wCR2+rmxTf+Lby5RZ2l/eS7hefzn1Q70u5sfrU2xN74W/5Hb6o/+Mr8W5Dwx/O/VFOpHirxXCmfwz/yO31S29wvxTusCLrbFCiv5z6okp/pV4himn2FWn/I7fVNtYs/Df1sb7Jt20/zvh/dpNk3iKRE0fjraRs3ib/kdBx8MWibLw99bd4qfxR34/zQf1dbgdw8JfXNYhFz/wAjpt8Sbi+QhMSPHd4u+8V9p7eW2X4G2e33zxKjZNojR+h9qf1n+E7KxeyeENl2ay/RG1P6xfDG2TeH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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEMAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIoEQws0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQsAAAAAw4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUoAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAMIMIAQoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8s0wMkQsIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwMgE0EUwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMIE0coAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcMsosAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkAA4gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAskMYEcEQUooAAAUAAEIAAAIA8AUAscQEooAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkEM0EAoUUAAoAAMEgAAAAMAIgMQAAAQAYQgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0YQgUUoUQEAoAAQQ8UoAAEQoEAAIEQQ4AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcEI4QQ4IgQAgI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`;
+
+function setLogos(){
+  ['wLogo','tbLogo'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=LOGO;});
+}
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let MODE = 'corporal'; // 'corporal' | 'facial'
+let fotos = [];
+let medidas = [];
+let curStep = 0;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+window.onload = function(){
+  setLogos();
+  if(localStorage.getItem('sbc_corporal_draft')) document.getElementById('btnResC').style.display='block';
+  if(localStorage.getItem('sbc_facial_draft'))   document.getElementById('btnResF').style.display='block';
+  if(localStorage.getItem('sbc_medico_draft'))   document.getElementById('btnResM').style.display='block';
+};
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+function goHome(){
+  document.getElementById('formView').style.display='none';
+  document.getElementById('previewView').style.display='none';
+  document.getElementById('welcomeView').style.display='flex';
+}
+
+function startMode(mode){
+  MODE = mode;
+  fotos = [{angulo: mode==='facial'?'Frontal':'Frontal', antes:null, despues:null}];
+  medidas = [];
+  buildFormUI();
+  document.getElementById('welcomeView').style.display='none';
+  document.getElementById('formView').style.display='block';
+  goToStep(0);
+}
+function resumeMode(mode){
+  MODE = mode;
+  fotos = [{angulo:'Frontal', antes:null, despues:null}];
+  medidas = [];
+  buildFormUI();
+  loadDraft();
+  document.getElementById('welcomeView').style.display='none';
+  document.getElementById('formView').style.display='block';
+  goToStep(0);
+}
+
+function goToStep(n){
+  document.querySelectorAll('.sp').forEach((p,i)=>p.classList.toggle('active',i===n));
+  document.querySelectorAll('.stab').forEach((t,i)=>{
+    t.classList.remove('active','done');
+    if(i===n) t.classList.add('active');
+    else if(i<n) t.classList.add('done');
+  });
+  curStep=n;
+  window.scrollTo(0,0);
+}
+
+function showForm(){
+  document.getElementById('previewView').style.display='none';
+  document.getElementById('formView').style.display='block';
+  window.scrollTo(0,0);
+}
+
+/* ══════════════════════════════════════════
+   BUILD FORM UI DYNAMICALLY
+══════════════════════════════════════════ */
+function buildFormUI(){
+  document.getElementById('tbType').textContent = MODE==='corporal'?'Corporal': MODE==='facial'?'Facial':'Médico · Inyectables';
+
+  // Steps definition
+  const steps = MODE==='corporal'
+    ? ['Paciente','Tratamiento','Fotografías','Mediciones','Análisis','Conclusión']
+    : MODE==='facial'
+    ? ['Paciente','Tratamiento','Fotografías','Análisis','Conclusión']
+    : ['Paciente','Procedimiento','Fotografías','Evolución','Conclusión'];
+
+  // Step nav
+  document.getElementById('stepNav').innerHTML = steps.map((s,i)=>
+    `<div class="stab${i===0?' active':''}" onclick="goToStep(${i})" data-s="${i}"><span class="snum">${i+1}</span>${s}</div>`
+  ).join('');
+
+  // Form content
+  document.getElementById('formContent').innerHTML = MODE==='corporal'
+    ? buildCorporalSteps()
+    : MODE==='facial'
+    ? buildFacialSteps()
+    : buildMedicoSteps();
+
+  // Re-render dynamic sections
+  renderFG();
+  if(MODE==='corporal') renderM();
+}
+
+/* ══════════════════════════════════════════
+   CORPORAL STEPS HTML
+══════════════════════════════════════════ */
+function buildCorporalSteps(){
+  return `
+  <!-- C-PASO 1 -->
+  <div class="sp active" id="step0">
+    <div class="sh"><h2>Datos del Paciente</h2><p>Información básica para identificación del informe.</p></div>
+    <div class="row">
+      <div class="f h"><label>Nombre Completo *</label><input id="nombre" type="text" placeholder="Nombre y apellido" oninput="save()"></div>
+      <div class="f h"><label>Teléfono</label><input id="telefono" type="text" placeholder="+56 9 ..." oninput="save()"></div>
+      <div class="f h"><label>Fecha de Inicio</label><input id="fechaInicio" type="date" oninput="save()"></div>
+      <div class="f h"><label>Fecha de Término</label><input id="fechaTermino" type="date" oninput="save()"></div>
+      <div class="f h"><label>Tratante Principal</label><input id="tratante" type="text" placeholder="Kinesióloga..." oninput="save()"></div>
+      <div class="f h"><label>Sucursal</label>
+        <select id="sucursal" onchange="save()">
+          <option value="">— Seleccionar —</option>
+          <option>San Miguel</option><option>Las Condes</option><option>El Golf</option>
+          <option>La Dehesa</option><option>Antofagasta</option>
+        </select>
+      </div>
+    </div>
+    <label class="chk" style="margin-top:14px"><input type="checkbox" id="mostrarTratante" checked onchange="save()">Mostrar tratante en el informe</label>
+    <div class="snav"><button class="btn-next" onclick="goToStep(1)">Siguiente: Tratamiento →</button></div>
+  </div>
+
+  <!-- C-PASO 2 -->
+  <div class="sp" id="step1">
+    <div class="sh"><h2>Tratamiento Corporal</h2><p>Detalle del protocolo aplicado durante el ciclo.</p></div>
+    <div class="sec">
+      <div class="sec-title">Equipo y Protocolo</div>
+      <div class="row">
+        <div class="f h">
+          <label>Equipo Utilizado</label>
+          <div class="pre-wrap">
+            <button class="pb" onclick="addPre('equipo',this,'Exion BTL')">Exion BTL</button>
+            <button class="pb" onclick="addPre('equipo',this,'Exilis Elite')">Exilis Elite</button>
+            <button class="pb" onclick="addPre('equipo',this,'EndyMed 3DEEP')">EndyMed 3DEEP</button>
+            <button class="pb" onclick="addPre('equipo',this,'Scizer')">Scizer</button>
+            <button class="pb" onclick="addPre('equipo',this,'Sculpt Body')">Sculpt Body</button>
+            <button class="pb" onclick="addPre('equipo',this,'Sculpt Body Pro')">Sculpt Body Pro</button>
+            <button class="pb" onclick="addPre('equipo',this,'Ultraformer III')">Ultraformer III</button>
+            <button class="pb" onclick="addPre('equipo',this,'MedContour')">MedContour</button>
+            <button class="pb" onclick="addPre('equipo',this,'Onda de Choque')">Onda de Choque</button>
+            <button class="pb" onclick="addPre('equipo',this,'EmTone')">EmTone</button>
+            <button class="pb" onclick="addPre('equipo',this,'Presoterapia')">Presoterapia</button>
+            <button class="pb" onclick="addPre('equipo',this,'HIFU')">HIFU</button>
+          </div>
+          <input id="equipo" type="text" placeholder="Equipo o combinación..." oninput="save()">
+        </div>
+        <div class="f h"><label>Zona Tratada / N° Sesiones</label><input id="sesiones" type="text" placeholder="Ej: 10 sesiones en abdomen y flancos" oninput="save()"></div>
+        <div class="f h"><label>Parámetros</label><input id="parametros" type="text" placeholder="Ej: Cooling 2-0, Intensidad 3" oninput="save()"></div>
+        <div class="f h">
+          <label>Objetivo del Ciclo</label>
+          <div class="pre-wrap">
+            <button class="pb" onclick="addPre('enfoque',this,'Reducción de volumen')">Reducción de volumen</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Reafirmación tisular')">Reafirmación tisular</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Remodelación de silueta')">Remodelación de silueta</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Tratamiento de celulitis')">Celulitis</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Definición muscular')">Definición muscular</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Reducción de grasa localizada')">Grasa localizada</button>
+          </div>
+          <input id="enfoque" type="text" placeholder="Objetivo o combinación..." oninput="save()">
+        </div>
+      </div>
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(0)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(2)">Siguiente: Fotografías →</button>
+    </div>
+  </div>
+
+  <!-- C-PASO 3 -->
+  <div class="sp" id="step2">
+    <div class="sh"><h2>Fotografías Comparativas</h2><p>Agrega uno o más ángulos fotográficos antes/después.</p></div>
+    <div id="fotosContainer"></div>
+    <button class="btn-add" style="width:100%;padding:11px" onclick="addFG()">+ Agregar ángulo fotográfico</button>
+    <div class="sec" style="margin-top:26px">
+      <div class="sec-title">Imágenes InBody</div>
+      <div class="fg-grid">
+        <div>
+          <div class="ftag" style="color:var(--t3)">InBody Inicial</div>
+          <div class="uz" onclick="document.getElementById('ibIF').click()">
+            <div class="uz-icon"><svg width="26" height="26" fill="none" viewBox="0 0 24 24"><path d="M12 16l-4-4h3V8h2v4h3l-4 4z" fill="#555"/><rect x="3" y="18" width="18" height="2" rx="1" fill="#555"/></svg></div>
+            <span>Subir InBody inicial</span>
+            <input type="file" id="ibIF" accept="image/*" onchange="loadIB(this,'ibIP','ibID')">
+          </div>
+          <img id="ibIP" style="display:none;width:100%;border-radius:10px;margin-top:9px;max-height:250px;object-fit:contain;background:#111">
+        </div>
+        <div>
+          <div class="ftag" style="color:var(--green)">InBody Final</div>
+          <div class="uz" onclick="document.getElementById('ibFF').click()">
+            <div class="uz-icon"><svg width="26" height="26" fill="none" viewBox="0 0 24 24"><path d="M12 16l-4-4h3V8h2v4h3l-4 4z" fill="#555"/><rect x="3" y="18" width="18" height="2" rx="1" fill="#555"/></svg></div>
+            <span>Subir InBody final</span>
+            <input type="file" id="ibFF" accept="image/*" onchange="loadIB(this,'ibFP','ibFD')">
+          </div>
+          <img id="ibFP" style="display:none;width:100%;border-radius:10px;margin-top:9px;max-height:250px;object-fit:contain;background:#111">
+        </div>
+      </div>
+      <input type="hidden" id="ibID"><input type="hidden" id="ibFD">
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(1)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(3)">Siguiente: Mediciones →</button>
+    </div>
+  </div>
+
+  <!-- C-PASO 4 -->
+  <div class="sp" id="step3">
+    <div class="sh"><h2>Mediciones</h2><p>Resultados InBody y medidas corporales en centímetros.</p></div>
+    <div class="sec">
+      <div class="sec-title">Resultados InBody</div>
+      <div class="tw"><table><thead><tr><th>Parámetro</th><th>Inicial</th><th>Final</th><th>Diferencia</th></tr></thead><tbody>
+        <tr><td>Peso Total (kg)</td><td><input class="ii" data-i="0" placeholder="0.0" oninput="updD(0);save()"></td><td><input class="fi" data-i="0" placeholder="0.0" oninput="updD(0);save()"></td><td id="d0" class="dn">—</td></tr>
+        <tr><td>Masa Muscular (kg)</td><td><input class="ii" data-i="1" placeholder="0.0" oninput="updD(1);save()"></td><td><input class="fi" data-i="1" placeholder="0.0" oninput="updD(1);save()"></td><td id="d1" class="dn">—</td></tr>
+        <tr><td>Masa Grasa Corporal (kg)</td><td><input class="ii" data-i="2" placeholder="0.0" oninput="updD(2);save()"></td><td><input class="fi" data-i="2" placeholder="0.0" oninput="updD(2);save()"></td><td id="d2" class="dn">—</td></tr>
+        <tr><td>Porcentaje de Grasa (%)</td><td><input class="ii" data-i="3" placeholder="0.0" oninput="updD(3);save()"></td><td><input class="fi" data-i="3" placeholder="0.0" oninput="updD(3);save()"></td><td id="d3" class="dn">—</td></tr>
+        <tr><td>Nivel de Grasa Visceral</td><td><input class="ii" data-i="4" placeholder="0" oninput="updD(4);save()"></td><td><input class="fi" data-i="4" placeholder="0" oninput="updD(4);save()"></td><td id="d4" class="dn">—</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Medidas Corporales (cm)</div>
+      <div class="tw"><table><thead><tr><th>Zona</th><th>Inicial</th><th>Final</th><th>Diferencia</th><th></th></tr></thead><tbody id="mT"></tbody></table></div>
+      <div class="pre-wrap" style="margin-top:10px">
+        <button class="pb" onclick="addMZ('Abdomen Alto')">+ Abdomen Alto</button>
+        <button class="pb" onclick="addMZ('Abdomen Bajo')">+ Abdomen Bajo</button>
+        <button class="pb" onclick="addMZ('Cintura')">+ Cintura</button>
+        <button class="pb" onclick="addMZ('Cadera')">+ Cadera</button>
+        <button class="pb" onclick="addMZ('Muslo Derecho')">+ Muslo D</button>
+        <button class="pb" onclick="addMZ('Muslo Izquierdo')">+ Muslo I</button>
+        <button class="pb" onclick="addMZ('Brazo Derecho')">+ Brazo D</button>
+        <button class="pb" onclick="addMZ('Espalda')">+ Espalda</button>
+      </div>
+      <button class="btn-add" onclick="addM()">+ Zona personalizada</button>
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(2)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(4)">Siguiente: Análisis →</button>
+    </div>
+  </div>
+
+  <!-- C-PASO 5 -->
+  <div class="sp" id="step4">
+    <div class="sh"><h2>Análisis Clínico</h2><p>Observaciones, cambios e indicaciones de continuidad.</p></div>
+    <div class="sec">
+      <div class="sec-title">Observaciones</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('analisis','Se observa reducción notable de volumen en la zona tratada.')">Reducción de volumen</button>
+        <button class="pb" onclick="addTA('analisis','Se evidencia mejoría en la firmeza y elasticidad cutánea.')">Mejoría de firmeza</button>
+        <button class="pb" onclick="addTA('analisis','Se aprecia redefinición de la silueta con mayor contorno en la zona objetivo.')">Redefinición de silueta</button>
+        <button class="pb" onclick="addTA('analisis','Se observa mejoría en la textura de piel con reducción visible de irregularidades.')">Mejoría de textura</button>
+        <button class="pb" onclick="addTA('analisis','Las fotografías muestran una diferencia favorable en la comparación antes/después.')">Diferencia fotográfica</button>
+        <button class="pb" onclick="addTA('analisis','La paciente refiere sentirse satisfecha con los cambios observados.')">Paciente satisfecha</button>
+        <button class="pb" onclick="addTA('analisis','Se observa adherencia adecuada al plan de tratamiento durante todo el ciclo.')">Buena adherencia</button>
+      </div>
+      <div class="f"><label>Análisis Comparativo</label><textarea id="analisis" rows="5" placeholder="Descripción de los cambios observados..." oninput="save()"></textarea></div>
+    </div>
+    <div style="margin-top:18px">
+      <div class="sec-title">Satisfacción del Paciente <span style="color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <div id="starsC" style="display:flex;gap:6px">
+          <span class="star" data-v="1" onclick="setStar('C',1)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="2" onclick="setStar('C',2)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="3" onclick="setStar('C',3)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="4" onclick="setStar('C',4)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="5" onclick="setStar('C',5)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+        </div>
+        <span id="starLabelC" style="font-size:12px;color:var(--t3)">Sin registrar</span>
+        <button class="btn-rem" style="margin-left:8px" onclick="setStar('C',0)">Borrar</button>
+      </div>
+      <input type="hidden" id="satisfaccion" oninput="save()">
+    </div>
+    <div class="sec">
+      <div class="sec-title">Cambios Globales</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('cambios','Reducción de medidas en las zonas tratadas.')">Reducción de medidas</button>
+        <button class="pb" onclick="addTA('cambios','Cambios favorables en composición corporal según InBody.')">Cambios en InBody</button>
+        <button class="pb" onclick="addTA('cambios','Mejoría global en firmeza y calidad de piel.')">Firmeza y calidad</button>
+        <button class="pb" onclick="addTA('cambios','Mejoría en la silueta general con resultados progresivos.')">Resultados progresivos</button>
+      </div>
+      <div class="f"><label>Cambios Globales</label><textarea id="cambios" rows="3" placeholder="Resumen de cambios principales..." oninput="save()"></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Indicaciones de Continuidad</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('continuidad','Se sugiere continuar con un segundo ciclo para mantener y potenciar los resultados.')">Segundo ciclo</button>
+        <button class="pb" onclick="addTA('continuidad','Se recomienda sesión de mantención mensual para preservar los resultados obtenidos.')">Mantención mensual</button>
+        <button class="pb" onclick="addTA('continuidad','Evaluación de nuevas zonas de interés según evolución y objetivos de la paciente.')">Nueva zona</button>
+        <button class="pb" onclick="addTA('continuidad','Se indica incorporar protocolo facial complementario en próxima etapa.')">Complementar con facial</button>
+      </div>
+      <div class="f"><label>Plan de Continuidad</label><textarea id="continuidad" rows="3" placeholder="Próxima etapa recomendada..." oninput="save()"></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Recomendaciones Finales</div>
+      <div class="f"><textarea id="recomendaciones" rows="7" oninput="save()">1. Mantener una dieta balanceada y equilibrada.
+2. Preferir proteínas magras, verduras y alimentos de bajo índice glucémico.
+3. Evitar el consumo de alcohol y tabaco.
+4. Realizar actividad física al menos 3 veces por semana.
+5. Mantener una hidratación mínima de 2 litros de agua al día.
+6. Priorizar un descanso adecuado y de calidad.
+7. Usar protector solar diario en zonas expuestas.</textarea></div>
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(3)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(5)">Siguiente: Conclusión →</button>
+    </div>
+  </div>
+
+  <!-- C-PASO 6 -->
+  <div class="sp" id="step5">
+    <div class="sh"><h2>Conclusión del Ciclo</h2><p>Generada automáticamente. Puedes editarla antes de generar el informe.</p></div>
+    <div class="card gold-card">
+      <div class="cl g">✦ Conclusión clínica</div>
+      <div class="f" style="margin-top:8px"><textarea id="conclusion" rows="9" placeholder="Haz clic en 'Generar conclusión' para producir el texto..." oninput="save()"></textarea></div>
+      <button class="btn-add" style="margin-top:10px;border-color:var(--gold);color:var(--gold)" onclick="genConclusion()">⟳ Generar conclusión automática</button>
+    </div>
+    <div class="card">
+      <div class="cl">Opciones del informe</div>
+      <label class="chk" style="margin-bottom:9px"><input type="checkbox" id="mostrarFirma" checked onchange="save()">Incluir línea de firma</label>
+      <label class="chk" style="margin-bottom:9px"><input type="checkbox" id="mostrarSuc" checked onchange="save()">Mostrar sucursal en encabezado</label>
+      <label class="chk"><input type="checkbox" id="mostrarContacto" onchange="save()">Incluir datos de contacto de la sucursal <span style="font-size:11px;color:var(--gold);margin-left:6px">← Para entregar al paciente</span></label>
+    </div>
+    <button class="btn-full" onclick="goToPreview()">Generar Informe Corporal →</button>
+    <div class="snav"><button class="btn-prev" onclick="goToStep(4)">← Volver a Análisis</button></div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   FACIAL STEPS HTML
+══════════════════════════════════════════ */
+function buildFacialSteps(){
+  return `
+  <!-- F-PASO 1 -->
+  <div class="sp active" id="step0">
+    <div class="sh"><h2>Datos del Paciente</h2><p>Información básica para identificación del informe.</p></div>
+    <div class="row">
+      <div class="f h"><label>Nombre Completo *</label><input id="nombre" type="text" placeholder="Nombre y apellido" oninput="save()"></div>
+      <div class="f h"><label>Teléfono</label><input id="telefono" type="text" placeholder="+56 9 ..." oninput="save()"></div>
+      <div class="f h"><label>Fecha de Inicio</label><input id="fechaInicio" type="date" oninput="save()"></div>
+      <div class="f h"><label>Fecha de Término</label><input id="fechaTermino" type="date" oninput="save()"></div>
+      <div class="f h"><label>Tratante Principal</label><input id="tratante" type="text" placeholder="Kinesióloga / Cosmetóloga..." oninput="save()"></div>
+      <div class="f h"><label>Sucursal</label>
+        <select id="sucursal" onchange="save()">
+          <option value="">— Seleccionar —</option>
+          <option>San Miguel</option><option>Las Condes</option><option>El Golf</option>
+          <option>La Dehesa</option><option>Antofagasta</option>
+        </select>
+      </div>
+    </div>
+    <label class="chk" style="margin-top:14px"><input type="checkbox" id="mostrarTratante" checked onchange="save()">Mostrar tratante en el informe</label>
+    <div class="snav"><button class="btn-next" onclick="goToStep(1)">Siguiente: Tratamiento →</button></div>
+  </div>
+
+  <!-- F-PASO 2 -->
+  <div class="sp" id="step1">
+    <div class="sh"><h2>Tratamiento Facial</h2><p>Detalle del protocolo aplicado durante el ciclo.</p></div>
+    <div class="sec">
+      <div class="sec-title">Equipo y Protocolo</div>
+      <div class="row">
+        <div class="f h">
+          <label>Equipo / Tratamiento Utilizado</label>
+          <div class="pre-wrap">
+            <button class="pb" onclick="addPre('equipo',this,'Exilis Facial')">Exilis Facial</button>
+            <button class="pb" onclick="addPre('equipo',this,'Exion Face')">Exion Face</button>
+            <button class="pb" onclick="addPre('equipo',this,'Exion Fraccionado')">Exion Fraccionado</button>
+            <button class="pb" onclick="addPre('equipo',this,'Exion Clear')">Exion Clear</button>
+            <button class="pb" onclick="addPre('equipo',this,'EndyMed Facial')">EndyMed Facial</button>
+            <button class="pb" onclick="addPre('equipo',this,'EndyMed Fraccionado')">EndyMed Fraccionado</button>
+            <button class="pb" onclick="addPre('equipo',this,'Facetone')">Facetone</button>
+            <button class="pb" onclick="addPre('equipo',this,'Ultraformer Facial')">Ultraformer Facial</button>
+            <button class="pb" onclick="addPre('equipo',this,'Lifting Coreano')">Lifting Coreano</button>
+            <button class="pb" onclick="addPre('equipo',this,'Hydrafacial')">Hydrafacial</button>
+            <button class="pb" onclick="addPre('equipo',this,'Mesoboost')">Mesoboost</button>
+            <button class="pb" onclick="addPre('equipo',this,'Cosmetología / Limpieza Facial')">Limpieza Facial</button>
+            <button class="pb" onclick="addPre('equipo',this,'Peeling Químico')">Peeling Químico</button>
+            <button class="pb" onclick="addPre('equipo',this,'Protocolo Combinado')">Protocolo Combinado</button>
+          </div>
+          <input id="equipo" type="text" placeholder="Equipo o protocolo..." oninput="save()">
+        </div>
+        <div class="f h"><label>N° Sesiones / Zona Facial</label><input id="sesiones" type="text" placeholder="Ej: 6 sesiones, zona completa" oninput="save()"></div>
+        <div class="f h"><label>Parámetros</label><input id="parametros" type="text" placeholder="Ej: Nivel 3, 15 min por zona" oninput="save()"></div>
+        <div class="f h">
+          <label>Objetivo del Ciclo</label>
+          <div class="pre-wrap">
+            <button class="pb" onclick="addPre('enfoque',this,'Reafirmación y lifting facial')">Reafirmación facial</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Lifting no quirúrgico')">Lifting no quirúrgico</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Hidratación profunda')">Hidratación profunda</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Reducción de líneas de expresión')">Líneas de expresión</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Mejora de textura y luminosidad')">Textura y luminosidad</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Tratamiento de manchas')">Manchas</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Reducción de poros dilatados')">Reducción de poros</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Flacidez facial y cuello')">Flacidez facial</button>
+            <button class="pb" onclick="addPre('enfoque',this,'Tratamiento de acné')">Acné</button>
+          </div>
+          <input id="enfoque" type="text" placeholder="Objetivo o combinación..." oninput="save()">
+        </div>
+      </div>
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(0)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(2)">Siguiente: Fotografías →</button>
+    </div>
+  </div>
+
+  <!-- F-PASO 3 -->
+  <div class="sp" id="step2">
+    <div class="sh"><h2>Fotografías Comparativas</h2><p>Registra los ángulos faciales antes y después del tratamiento.</p></div>
+    <div class="sec" style="margin-bottom:14px">
+      <div class="sec-title">Ángulos sugeridos</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addFGPreset('Frontal')">+ Frontal</button>
+        <button class="pb" onclick="addFGPreset('Lateral Derecho')">+ Lateral D</button>
+        <button class="pb" onclick="addFGPreset('Lateral Izquierdo')">+ Lateral I</button>
+        <button class="pb" onclick="addFGPreset('3/4 Derecho')">+ 3/4 Derecho</button>
+        <button class="pb" onclick="addFGPreset('3/4 Izquierdo')">+ 3/4 Izquierdo</button>
+        <button class="pb" onclick="addFGPreset('Zoom Frente')">+ Zoom Frente</button>
+        <button class="pb" onclick="addFGPreset('Zoom Mejillas')">+ Zoom Mejillas</button>
+        <button class="pb" onclick="addFGPreset('Contorno Mandibular')">+ Mandíbula</button>
+        <button class="pb" onclick="addFGPreset('Cuello')">+ Cuello</button>
+        <button class="pb" onclick="addFGPreset('Zona Ocular')">+ Zona Ocular</button>
+      </div>
+    </div>
+    <div id="fotosContainer"></div>
+    <button class="btn-add" style="width:100%;padding:11px" onclick="addFG()">+ Agregar ángulo personalizado</button>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(1)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(3)">Siguiente: Análisis →</button>
+    </div>
+  </div>
+
+  <!-- F-PASO 4 -->
+  <div class="sp" id="step3">
+    <div class="sh"><h2>Análisis Clínico Facial</h2><p>Observaciones, evolución de piel e indicaciones post tratamiento.</p></div>
+    <div class="sec">
+      <div class="sec-title">Observaciones de Piel</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('analisis','Se observa mejoría en la firmeza y tonicidad facial.')">Firmeza y tonicidad</button>
+        <button class="pb" onclick="addTA('analisis','Se aprecia reducción de líneas de expresión en la zona tratada.')">Reducción de líneas</button>
+        <button class="pb" onclick="addTA('analisis','Se evidencia mejoría en la hidratación y luminosidad cutánea.')">Hidratación y luminosidad</button>
+        <button class="pb" onclick="addTA('analisis','Se observa efecto lifting progresivo con mejor definición del óvalo facial.')">Efecto lifting</button>
+        <button class="pb" onclick="addTA('analisis','Se aprecia reducción de poros y mejoría en la textura de la piel.')">Textura y poros</button>
+        <button class="pb" onclick="addTA('analisis','Se evidencia reducción de manchas e irregularidades en la pigmentación.')">Reducción de manchas</button>
+        <button class="pb" onclick="addTA('analisis','Las fotografías muestran una diferencia favorable en la comparación antes/después.')">Diferencia fotográfica</button>
+        <button class="pb" onclick="addTA('analisis','La paciente refiere sentirse satisfecha con los cambios observados en su piel.')">Paciente satisfecha</button>
+        <button class="pb" onclick="addTA('analisis','Se observa mejoría en la calidad de piel con reducción visible de irregularidades.')">Calidad de piel</button>
+      </div>
+      <div class="f"><label>Análisis Comparativo</label><textarea id="analisis" rows="5" placeholder="Descripción de los cambios observados en la piel..." oninput="save()"></textarea></div>
+    </div>
+    <div style="margin-top:18px">
+      <div class="sec-title">Satisfacción del Paciente <span style="color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <div id="starsF" style="display:flex;gap:6px">
+          <span class="star" data-v="1" onclick="setStar('F',1)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="2" onclick="setStar('F',2)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="3" onclick="setStar('F',3)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="4" onclick="setStar('F',4)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="5" onclick="setStar('F',5)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+        </div>
+        <span id="starLabelF" style="font-size:12px;color:var(--t3)">Sin registrar</span>
+        <button class="btn-rem" style="margin-left:8px" onclick="setStar('F',0)">Borrar</button>
+      </div>
+      <input type="hidden" id="satisfaccion" oninput="save()">
+    </div>
+    <div class="sec">
+      <div class="sec-title">Cambios Globales</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('cambios','Mejoría global en firmeza, textura y luminosidad de la piel.')">Mejoría global de piel</button>
+        <button class="pb" onclick="addTA('cambios','Resultados de lifting progresivo acordes al ciclo completado.')">Lifting progresivo</button>
+        <button class="pb" onclick="addTA('cambios','Mejora visible en la definición del óvalo facial y cuello.')">Definición del óvalo</button>
+        <button class="pb" onclick="addTA('cambios','Resultados progresivos esperados para la etapa del tratamiento.')">Resultados progresivos</button>
+      </div>
+      <div class="f"><label>Cambios Globales</label><textarea id="cambios" rows="3" placeholder="Resumen de cambios principales en piel y estructura facial..." oninput="save()"></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Indicaciones Post Tratamiento</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('continuidad','Aplicar protector solar SPF 50 diariamente.')">Protector solar SPF 50</button>
+        <button class="pb" onclick="addTA('continuidad','Evitar exposición solar directa durante las próximas 48 horas.')">Evitar sol 48 hrs</button>
+        <button class="pb" onclick="addTA('continuidad','No realizar maquillaje las primeras 24 horas post sesión.')">Sin maquillaje 24 hrs</button>
+        <button class="pb" onclick="addTA('continuidad','Evitar calor excesivo: sauna, baño de tina o vapor por 48 horas.')">Evitar calor 48 hrs</button>
+        <button class="pb" onclick="addTA('continuidad','Mantener hidratación abundante, mínimo 2 litros de agua diarios.')">Hidratación abundante</button>
+        <button class="pb" onclick="addTA('continuidad','No manipular ni frotar la zona tratada.')">No frotar zona</button>
+        <button class="pb" onclick="addTA('continuidad','Se sugiere continuar con el siguiente ciclo para potenciar resultados.')">Continuar ciclo</button>
+        <button class="pb" onclick="addTA('continuidad','Se recomienda sesión de mantención mensual para preservar los resultados.')">Mantención mensual</button>
+      </div>
+      <div class="f"><label>Indicaciones de Continuidad</label><textarea id="continuidad" rows="4" placeholder="Indicaciones post sesión y plan de continuidad..." oninput="save()"></textarea></div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Recomendaciones Finales</div>
+      <div class="f"><textarea id="recomendaciones" rows="6" oninput="save()">1. Aplicar protector solar SPF 50 todos los días, incluso en días nublados.
+2. Mantener una rutina de skincare acorde al tipo de piel.
+3. Evitar el tabaco, ya que acelera el envejecimiento cutáneo.
+4. Mantener una hidratación adecuada, mínimo 2 litros de agua al día.
+5. Dormir boca arriba cuando sea posible para evitar marcas de presión.
+6. Consultar ante cualquier reacción inusual posterior al tratamiento.</textarea></div>
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(2)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(4)">Siguiente: Conclusión →</button>
+    </div>
+  </div>
+
+  <!-- F-PASO 5 -->
+  <div class="sp" id="step4">
+    <div class="sh"><h2>Conclusión del Ciclo Facial</h2><p>Generada automáticamente. Puedes editarla antes de imprimir.</p></div>
+    <div class="card gold-card">
+      <div class="cl g">✦ Conclusión clínica</div>
+      <div class="f" style="margin-top:8px"><textarea id="conclusion" rows="9" placeholder="Haz clic en 'Generar conclusión' para producir el texto..." oninput="save()"></textarea></div>
+      <button class="btn-add" style="margin-top:10px;border-color:var(--gold);color:var(--gold)" onclick="genConclusion()">⟳ Generar conclusión automática</button>
+    </div>
+    <div class="card">
+      <div class="cl">Opciones del informe</div>
+      <label class="chk" style="margin-bottom:9px"><input type="checkbox" id="mostrarFirma" checked onchange="save()">Incluir línea de firma</label>
+      <label class="chk" style="margin-bottom:9px"><input type="checkbox" id="mostrarSuc" checked onchange="save()">Mostrar sucursal en encabezado</label>
+      <label class="chk"><input type="checkbox" id="mostrarContacto" onchange="save()">Incluir datos de contacto de la sucursal <span style="font-size:11px;color:var(--gold);margin-left:6px">← Para entregar al paciente</span></label>
+    </div>
+    <button class="btn-full" onclick="goToPreview()">Generar Informe Facial →</button>
+    <div class="snav"><button class="btn-prev" onclick="goToStep(3)">← Volver a Análisis</button></div>
+  </div>`;
+}
+
+
+/* ══════════════════════════════════════════
+   MÉDICO STEPS HTML
+══════════════════════════════════════════ */
+function buildMedicoSteps(){
+  return `
+  <!-- M-PASO 1 -->
+  <div class="sp active" id="step0">
+    <div class="sh">
+      <h2>Datos del Paciente</h2>
+      <p>Procedimiento médico · Sucursal La Dehesa</p>
+    </div>
+    <div style="background:#12100a;border:1px solid #3a2f18;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:var(--gold)">
+      ⚕ Este informe es de uso clínico interno y puede entregarse al paciente si lo solicita.
+    </div>
+    <div class="row">
+      <div class="f h"><label>Nombre Completo *</label><input id="nombre" type="text" placeholder="Nombre y apellido" oninput="save()"></div>
+      <div class="f h"><label>Teléfono</label><input id="telefono" type="text" placeholder="+56 9 ..." oninput="save()"></div>
+      <div class="f h"><label>Fecha del Procedimiento</label><input id="fechaInicio" type="date" oninput="save()"></div>
+      <div class="f h"><label>N° Ficha / Folio (opcional)</label><input id="sesiones" type="text" placeholder="Ej: 00234" oninput="save()"></div>
+      <div class="f h"><label>Médico Tratante (opcional)</label><input id="medico" type="text" placeholder="Nombre del médico..." oninput="save()"></div>
+      <div class="f h"><label>Sucursal</label>
+        <select id="sucursal" onchange="save()">
+          <option value="La Dehesa" selected>La Dehesa</option>
+        </select>
+      </div>
+    </div>
+    <label class="chk" style="margin-top:14px"><input type="checkbox" id="mostrarTratante" checked onchange="save()">Mostrar médico tratante en el informe</label>
+    <label class="chk" style="margin-top:10px"><input type="checkbox" id="consentimiento" checked onchange="save()">Consentimiento informado firmado por el paciente</label>
+    <div class="snav"><button class="btn-next" onclick="goToStep(1)">Siguiente: Procedimiento →</button></div>
+  </div>
+
+  <!-- M-PASO 2 -->
+  <div class="sp" id="step1">
+    <div class="sh"><h2>Procedimiento Realizado</h2><p>Selecciona los productos utilizados y completa los detalles del procedimiento.</p></div>
+    <div class="sec">
+      <div class="sec-title">Productos / Tratamientos</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addPre('productos',this,'Dysport')">Dysport</button>
+        <button class="pb" onclick="addPre('productos',this,'Botox')">Botox</button>
+        <button class="pb" onclick="addPre('productos',this,'Ácido Hialurónico')">Ácido Hialurónico</button>
+        <button class="pb" onclick="addPre('productos',this,'Relleno de Labios')">Relleno de Labios</button>
+        <button class="pb" onclick="addPre('productos',this,'Rinomodelación con HA')">Rinomodelación</button>
+        <button class="pb" onclick="addPre('productos',this,'Skinbooster / Hidratación Profunda')">Skinbooster</button>
+        <button class="pb" onclick="addPre('productos',this,'Radiesse')">Radiesse</button>
+        <button class="pb" onclick="addPre('productos',this,'Sculptra')">Sculptra</button>
+        <button class="pb" onclick="addPre('productos',this,'Exosomas')">Exosomas</button>
+        <button class="pb" onclick="addPre('productos',this,'Bioestimulador de Colágeno')">Bioestimulador</button>
+        <button class="pb" onclick="addPre('productos',this,'Mesoterapia Facial')">Mesoterapia Facial</button>
+        <button class="pb" onclick="addPre('productos',this,'Otro')">Otro</button>
+      </div>
+      <div class="f"><label>Productos utilizados</label><input id="productos" type="text" placeholder="Selecciona arriba o escribe aquí..." oninput="save()"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">Detalle del Procedimiento</div>
+      <div class="row">
+        <div class="f h"><label>Zona(s) Tratada(s)</label><input id="zona" type="text" placeholder="Ej: Frente, entrecejo, patas de gallo..." oninput="save()"></div>
+        <div class="f h"><label>Dosis / Unidades / Volumen</label><input id="dosis" type="text" placeholder="Ej: 50 U Dysport, 1ml HA labios..." oninput="save()"></div>
+        <div class="f h"><label>Técnica Utilizada</label><input id="tecnica" type="text" placeholder="Ej: Microbolus, lineal, abanico..." oninput="save()"></div>
+        <div class="f h"><label>Otros (especificar si aplica)</label><input id="otros" type="text" placeholder="Producto, marca, lote u observación adicional..." oninput="save()"></div>
+      </div>
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(0)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(2)">Siguiente: Fotografías →</button>
+    </div>
+  </div>
+
+  <!-- M-PASO 3 -->
+  <div class="sp" id="step2">
+    <div class="sh"><h2>Fotografías Pre / Post</h2><p>Registra los ángulos antes y después del procedimiento.</p></div>
+    <div class="sec" style="margin-bottom:14px">
+      <div class="sec-title">Ángulos sugeridos</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addFGPreset('Frontal')">+ Frontal</button>
+        <button class="pb" onclick="addFGPreset('Lateral Derecho')">+ Lateral D</button>
+        <button class="pb" onclick="addFGPreset('Lateral Izquierdo')">+ Lateral I</button>
+        <button class="pb" onclick="addFGPreset('3/4 Derecho')">+ 3/4 Derecho</button>
+        <button class="pb" onclick="addFGPreset('3/4 Izquierdo')">+ 3/4 Izquierdo</button>
+        <button class="pb" onclick="addFGPreset('Zoom Labios')">+ Zoom Labios</button>
+        <button class="pb" onclick="addFGPreset('Zoom Nariz')">+ Zoom Nariz</button>
+        <button class="pb" onclick="addFGPreset('Zoom Entrecejo')">+ Zoom Entrecejo</button>
+        <button class="pb" onclick="addFGPreset('Zona Ocular')">+ Zona Ocular</button>
+        <button class="pb" onclick="addFGPreset('Contorno Mandibular')">+ Mandíbula</button>
+      </div>
+    </div>
+    <div id="fotosContainer"></div>
+    <button class="btn-add" style="width:100%;padding:11px" onclick="addFG()">+ Agregar ángulo personalizado</button>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(1)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(3)">Siguiente: Evolución →</button>
+    </div>
+  </div>
+
+  <!-- M-PASO 4 -->
+  <div class="sp" id="step3">
+    <div class="sh"><h2>Evolución y Observaciones</h2><p>Registro clínico del procedimiento y plan post tratamiento.</p></div>
+    <div class="sec">
+      <div class="sec-title">Observaciones Clínicas</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('analisis','Sin signos de reacción adversa al momento del control.')">Sin reacción adversa</button>
+        <button class="pb" onclick="addTA('analisis','Resultado acorde a lo esperado para la etapa del tratamiento.')">Resultado esperado</button>
+        <button class="pb" onclick="addTA('analisis','Leve hematoma residual, se espera resolución espontánea en 48-72 horas.')">Hematoma leve</button>
+        <button class="pb" onclick="addTA('analisis','Paciente tolera bien el procedimiento sin complicaciones.')">Sin complicaciones</button>
+        <button class="pb" onclick="addTA('analisis','Se observa resultado natural y armónico con los rasgos de la paciente.')">Resultado natural</button>
+        <button class="pb" onclick="addTA('analisis','Leve edema post procedimiento, de carácter transitorio y esperable.')">Edema transitorio</button>
+        <button class="pb" onclick="addTA('analisis','Resultado estético satisfactorio, acorde a los objetivos acordados con la paciente.')">Resultado satisfactorio</button>
+      </div>
+      <div class="f"><label>Observaciones Clínicas</label><textarea id="analisis" rows="5" placeholder="Descripción de la evolución y resultado del procedimiento..." oninput="save()"></textarea></div>
+    </div>
+    <div style="margin-top:18px">
+      <div class="sec-title">Satisfacción del Paciente <span style="color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <div id="starsM" style="display:flex;gap:6px">
+          <span class="star" data-v="1" onclick="setStar('M',1)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="2" onclick="setStar('M',2)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="3" onclick="setStar('M',3)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="4" onclick="setStar('M',4)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+          <span class="star" data-v="5" onclick="setStar('M',5)" style="font-size:26px;cursor:pointer;opacity:.35">★</span>
+        </div>
+        <span id="starLabelM" style="font-size:12px;color:var(--t3)">Sin registrar</span>
+        <button class="btn-rem" style="margin-left:8px" onclick="setStar('M',0)">Borrar</button>
+      </div>
+      <input type="hidden" id="satisfaccion" oninput="save()">
+    </div>
+    <div class="sec">
+      <div class="sec-title">Indicaciones Post Procedimiento</div>
+      <div class="pre-wrap">
+        <button class="pb" onclick="addTA('continuidad','No realizar actividad física intensa por 24 horas.')">Sin actividad física 24 hrs</button>
+        <button class="pb" onclick="addTA('continuidad','No manipular ni masajear la zona tratada.')">No masajear zona</button>
+        <button class="pb" onclick="addTA('continuidad','Evitar exposición solar directa y aplicar SPF 50 diariamente.')">Evitar sol · SPF 50</button>
+        <button class="pb" onclick="addTA('continuidad','No consumir alcohol ni antiinflamatorios por 48 horas.')">Sin alcohol ni AINE 48 hrs</button>
+        <button class="pb" onclick="addTA('continuidad','Aplicar hielo envuelto en paño si hay inflamación, por 10-15 minutos.')">Hielo si hay inflamación</button>
+        <button class="pb" onclick="addTA('continuidad','Consultar si aparece dolor intenso, asimetría marcada o cambio de coloración.')">Consultar ante síntomas</button>
+        <button class="pb" onclick="addTA('continuidad','No realizar maquillaje las primeras 24 horas post procedimiento.')">Sin maquillaje 24 hrs</button>
+        <button class="pb" onclick="addTA('continuidad','Evitar calor excesivo: sauna, baño de tina o vapor por 48 horas.')">Evitar calor 48 hrs</button>
+      </div>
+      <div class="f"><label>Indicaciones Post Procedimiento</label><textarea id="continuidad" rows="5" placeholder="Selecciona arriba o escribe las indicaciones específicas..." oninput="save()"></textarea></div>
+    </div>
+    <div class="snav">
+      <button class="btn-prev" onclick="goToStep(2)">← Anterior</button>
+      <button class="btn-next" onclick="goToStep(4)">Siguiente: Conclusión →</button>
+    </div>
+  </div>
+
+  <!-- M-PASO 5 -->
+  <div class="sp" id="step4">
+    <div class="sh"><h2>Conclusión Médica</h2><p>Redactada por el médico tratante. Editable antes de imprimir.</p></div>
+    <div class="card gold-card">
+      <div class="cl g">✦ Conclusión del procedimiento</div>
+      <div class="f" style="margin-top:8px"><textarea id="conclusion" rows="9" placeholder="El médico tratante puede redactar aquí la conclusión clínica del procedimiento..." oninput="save()"></textarea></div>
+      <button class="btn-add" style="margin-top:10px;border-color:var(--gold);color:var(--gold)" onclick="genConclusion()">⟳ Generar conclusión automática</button>
+    </div>
+    <div class="card">
+      <div class="cl">Opciones del informe</div>
+      <label class="chk" style="margin-bottom:9px"><input type="checkbox" id="mostrarFirma" checked onchange="save()">Incluir línea de firma médica</label>
+      <label class="chk" style="margin-bottom:9px"><input type="checkbox" id="mostrarSuc" checked onchange="save()">Mostrar sucursal en encabezado</label>
+      <label class="chk"><input type="checkbox" id="mostrarContacto" onchange="save()">Incluir datos de contacto <span style="font-size:11px;color:var(--gold);margin-left:6px">← Para entregar al paciente</span></label>
+    </div>
+    <button class="btn-full" onclick="goToPreview()">Generar Informe Médico →</button>
+    <div class="snav"><button class="btn-prev" onclick="goToStep(3)">← Volver a Evolución</button></div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   AUTOSAVE
+══════════════════════════════════════════ */
+let saveT;
+function save(){clearTimeout(saveT);saveT=setTimeout(doSave,600);}
+function doSave(){
+  const key = MODE==='corporal'?'sbc_corporal_draft': MODE==='facial'?'sbc_facial_draft':'sbc_medico_draft';
+  const d={
+    nombre:v('nombre'),telefono:v('telefono'),fechaInicio:v('fechaInicio'),fechaTermino:v('fechaTermino'),
+    tratante:v('tratante'),sucursal:v('sucursal'),mostrarTratante:chk('mostrarTratante'),
+    equipo:v('equipo'),sesiones:v('sesiones'),parametros:v('parametros'),enfoque:v('enfoque'),
+    analisis:v('analisis'),cambios:v('cambios'),continuidad:v('continuidad'),
+    recomendaciones:v('recomendaciones'),conclusion:v('conclusion'),
+    mostrarFirma:chk('mostrarFirma'),mostrarSuc:chk('mostrarSuc'),mostrarContacto:chk('mostrarContacto'),
+    satisfaccion:v('satisfaccion'),
+    fotos
+  };
+  if(MODE==='corporal'){
+    d.ibID=v('ibID');d.ibFD=v('ibFD');
+    d.ibIni=[...document.querySelectorAll('.ii')].map(x=>x.value);
+    d.ibFin=[...document.querySelectorAll('.fi')].map(x=>x.value);
+    d.medidas=medidas;
+  }
+  if(MODE==='medico'){
+    d.medico=v('medico');d.productos=v('productos');d.zona=v('zona');
+    d.dosis=v('dosis');d.tecnica=v('tecnica');d.otros=v('otros');
+    d.consentimiento=chk('consentimiento');
+  }
+  localStorage.setItem(key,JSON.stringify(d));
+  const b=document.getElementById('saveBadge');
+  b.classList.add('on');
+  setTimeout(()=>b.classList.remove('on'),2500);
+}
+function loadDraft(){
+  const key=MODE==='corporal'?'sbc_corporal_draft': MODE==='facial'?'sbc_facial_draft':'sbc_medico_draft';
+  const d=JSON.parse(localStorage.getItem(key)||'{}');
+  if(!d.nombre) return;
+  setV('nombre',d.nombre);setV('telefono',d.telefono);setV('fechaInicio',d.fechaInicio);
+  setV('fechaTermino',d.fechaTermino);setV('tratante',d.tratante);setV('sucursal',d.sucursal);
+  if(d.mostrarTratante!==undefined) document.getElementById('mostrarTratante').checked=d.mostrarTratante;
+  setV('equipo',d.equipo);setV('sesiones',d.sesiones);setV('parametros',d.parametros);setV('enfoque',d.enfoque);
+  setV('analisis',d.analisis);setV('cambios',d.cambios);setV('continuidad',d.continuidad);
+  setV('recomendaciones',d.recomendaciones);setV('conclusion',d.conclusion);
+  if(d.mostrarFirma!==undefined) document.getElementById('mostrarFirma').checked=d.mostrarFirma;
+  if(d.mostrarSuc!==undefined) document.getElementById('mostrarSuc').checked=d.mostrarSuc;
+  if(d.mostrarContacto!==undefined) document.getElementById('mostrarContacto').checked=d.mostrarContacto;
+  if(d.fotos){fotos=d.fotos;renderFG();}
+  if(d.satisfaccion){const el=document.getElementById('satisfaccion');if(el){el.value=d.satisfaccion;setTimeout(loadStars,100);}}
+  if(MODE==='medico'){
+    setV('medico',d.medico);setV('productos',d.productos);setV('zona',d.zona);
+    setV('dosis',d.dosis);setV('tecnica',d.tecnica);setV('otros',d.otros);
+    if(d.consentimiento!==undefined){const el=document.getElementById('consentimiento');if(el)el.checked=d.consentimiento;}
+  }
+  if(MODE==='corporal'){
+    setV('ibID',d.ibID||'');setV('ibFD',d.ibFD||'');
+    if(d.ibID){const p=document.getElementById('ibIP');if(p){p.src=d.ibID;p.style.display='block';}}
+    if(d.ibFD){const p=document.getElementById('ibFP');if(p){p.src=d.ibFD;p.style.display='block';}}
+    if(d.ibIni) d.ibIni.forEach((val,i)=>{const el=document.querySelector(`.ii[data-i="${i}"]`);if(el){el.value=val;updD(i);}});
+    if(d.ibFin) d.ibFin.forEach((val,i)=>{const el=document.querySelector(`.fi[data-i="${i}"]`);if(el){el.value=val;updD(i);}});
+    if(d.medidas){medidas=d.medidas;renderM();}
+  }
+}
+function confirmClear(){
+  if(confirm('¿Limpiar todos los datos de este informe?')){
+    const key=MODE==='corporal'?'sbc_corporal_draft': MODE==='facial'?'sbc_facial_draft':'sbc_medico_draft';
+    localStorage.removeItem(key);
+    startMode(MODE);
+  }
+}
+const v=id=>(document.getElementById(id)||{}).value||'';
+const chk=id=>(document.getElementById(id)||{}).checked||false;
+const setV=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined&&val!==null)el.value=val;};
+
+/* ══════════════════════════════════════════
+   PRESETS
+══════════════════════════════════════════ */
+function addPre(id,btn,val){
+  const el=document.getElementById(id);
+  el.value=el.value?el.value+', '+val:val;
+  btn.classList.toggle('sel');save();
+}
+function addTA(id,txt){
+  const el=document.getElementById(id);
+  el.value=el.value?el.value+'\n'+txt:txt;save();
+}
+
+/* ══════════════════════════════════════════
+   FOTO GRUPOS
+══════════════════════════════════════════ */
+function renderFG(){
+  const c=document.getElementById('fotosContainer');
+  if(!c) return;
+  c.innerHTML='';
+  fotos.forEach((g,i)=>{
+    const d=document.createElement('div');
+    d.className='fg';
+    d.innerHTML=`
+      <div class="fg-head">
+        <input type="text" value="${g.angulo}" placeholder="Ángulo fotográfico..." oninput="fotos[${i}].angulo=this.value;save()">
+        ${fotos.length>1?`<button class="btn-rem" onclick="rmFG(${i})">Eliminar</button>`:''}
+      </div>
+      <div class="fg-grid">
+        <div>
+          <div class="ftag" style="color:var(--t3)">Antes</div>
+          <div class="uz" onclick="document.getElementById('fa${i}').click()">
+            ${g.antes?`<img src="${g.antes}">`:`<div class="uz-icon"><svg width="26" height="26" fill="none" viewBox="0 0 24 24"><path d="M12 16l-4-4h3V8h2v4h3l-4 4z" fill="#555"/><rect x="3" y="18" width="18" height="2" rx="1" fill="#555"/></svg></div><span>Foto ANTES</span>`}
+            <input type="file" id="fa${i}" accept="image/*" onchange="loadFG(this,${i},'antes')">
+          </div>
+        </div>
+        <div>
+          <div class="ftag" style="color:var(--green)">Después</div>
+          <div class="uz" onclick="document.getElementById('fd${i}').click()">
+            ${g.despues?`<img src="${g.despues}">`:`<div class="uz-icon"><svg width="26" height="26" fill="none" viewBox="0 0 24 24"><path d="M12 16l-4-4h3V8h2v4h3l-4 4z" fill="#555"/><rect x="3" y="18" width="18" height="2" rx="1" fill="#555"/></svg></div><span>Foto DESPUÉS</span>`}
+            <input type="file" id="fd${i}" accept="image/*" onchange="loadFG(this,${i},'despues')">
+          </div>
+        </div>
+      </div>`;
+    c.appendChild(d);
+  });
+}
+function loadFG(inp,i,campo){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{fotos[i][campo]=e.target.result;renderFG();save();};
+  r.readAsDataURL(f);
+}
+function addFG(){fotos.push({angulo:'',antes:null,despues:null});renderFG();}
+function addFGPreset(ang){fotos.push({angulo:ang,antes:null,despues:null});renderFG();}
+function rmFG(i){fotos.splice(i,1);renderFG();save();}
+
+/* InBody fotos */
+function loadIB(inp,prevId,dataId){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const p=document.getElementById(prevId);p.src=e.target.result;p.style.display='block';
+    document.getElementById(dataId).value=e.target.result;save();
+  };
+  r.readAsDataURL(f);
+}
+
+/* ══════════════════════════════════════════
+   MEDIDAS (corporal only)
+══════════════════════════════════════════ */
+function renderM(){
+  const t=document.getElementById('mT');if(!t)return;
+  t.innerHTML='';
+  medidas.forEach((m,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input class="wide" value="${m.zona}" placeholder="Zona" oninput="medidas[${i}].zona=this.value;save()"></td>
+      <td><input value="${m.ini}" placeholder="0" oninput="medidas[${i}].ini=this.value;updMD(${i});save()"></td>
+      <td><input value="${m.fin}" placeholder="0" oninput="medidas[${i}].fin=this.value;updMD(${i});save()"></td>
+      <td id="md${i}" class="dn">—</td>
+      <td>${medidas.length>1?`<button class="btn-del" onclick="rmM(${i})">✕</button>`:''}</td>`;
+    t.appendChild(tr);
+    if(m.ini&&m.fin)setTimeout(()=>updMD(i),10);
+  });
+}
+function addM(){medidas.push({zona:'',ini:'',fin:''});renderM();}
+function addMZ(z){medidas.push({zona:z,ini:'',fin:''});renderM();}
+function rmM(i){medidas.splice(i,1);renderM();save();}
+
+/* ══════════════════════════════════════════
+   DIFFS
+══════════════════════════════════════════ */
+const ibMeta=[
+  {inv:false,pct:false},{inv:false,pct:false},{inv:true,pct:false},
+  {inv:true,pct:true},{inv:true,pct:false}
+];
+function getDiff(a,b,inv,pct){
+  const na=parseFloat(a),nb=parseFloat(b);
+  if(isNaN(na)||isNaN(nb))return{t:'—',c:'dn'};
+  const d=nb-na;
+  if(Math.abs(d)<0.05)return{t:'Sin cambio',c:'dn'};
+  const good=inv?d<0:d>0;
+  return{t:(d>0?'+':'')+d.toFixed(1)+(pct?'%':' kg'),c:good?'dg':'dr'};
+}
+function getMD(a,b){
+  const na=parseFloat(a),nb=parseFloat(b);
+  if(isNaN(na)||isNaN(nb))return{t:'—',c:'dn'};
+  const d=nb-na;
+  if(Math.abs(d)<0.1)return{t:'Sin cambio',c:'dn'};
+  return{t:(d>0?'+':'')+d.toFixed(1)+' cm',c:d<0?'dg':'dr'};
+}
+function updD(i){
+  const a=document.querySelector(`.ii[data-i="${i}"]`)?.value;
+  const b=document.querySelector(`.fi[data-i="${i}"]`)?.value;
+  const m=ibMeta[i];const r=getDiff(a,b,m.inv,m.pct);
+  const el=document.getElementById('d'+i);
+  if(el){el.textContent=r.t;el.className=r.c;}
+}
+function updMD(i){
+  const row=medidas[i];if(!row)return;
+  const r=getMD(row.ini,row.fin);
+  const el=document.getElementById('md'+i);
+  if(el){el.textContent=r.t;el.className=r.c;}
+}
+
+/* ══════════════════════════════════════════
+   AUTO CONCLUSIÓN
+══════════════════════════════════════════ */
+function genConclusion(){
+  const nombre=v('nombre')||'la paciente';
+  const equipo=v('equipo');
+  const sesiones=v('sesiones');
+  const cambios=v('cambios');
+  let lines=[];
+
+  if(MODE==='corporal'){
+    lines.push(`Al finalizar el ciclo de tratamiento corporal, ${nombre} completó el plan establecido con resultados evaluados en la presente sesión de cierre.`);
+    if(equipo||sesiones){
+      let l='Se aplicó';
+      if(equipo) l+=` el equipo ${equipo}`;
+      if(sesiones) l+=`, con ${sesiones}`;
+      lines.push(l+'.');
+    }
+    const ibIni=[...document.querySelectorAll('.ii')].map(x=>x.value);
+    const ibFin=[...document.querySelectorAll('.fi')].map(x=>x.value);
+    const pesoI=parseFloat(ibIni[0]),pesoF=parseFloat(ibFin[0]);
+    const grasaI=parseFloat(ibIni[2]),grasaF=parseFloat(ibFin[2]);
+    const muscI=parseFloat(ibIni[1]),muscF=parseFloat(ibFin[1]);
+    let ibLine=[];
+    if(!isNaN(pesoI)&&!isNaN(pesoF)){const dp=pesoF-pesoI;ibLine.push(`variación de peso de ${dp>0?'+':''}${dp.toFixed(1)} kg`);}
+    if(!isNaN(grasaI)&&!isNaN(grasaF)){const dg=grasaF-grasaI;ibLine.push(`masa grasa ${dg<0?'reducida en':'aumentada en'} ${Math.abs(dg).toFixed(1)} kg`);}
+    if(!isNaN(muscI)&&!isNaN(muscF)){const dm=muscF-muscI;ibLine.push(`masa muscular ${dm>0?'aumentada en':'reducida en'} ${Math.abs(dm).toFixed(1)} kg`);}
+    if(ibLine.length>0) lines.push('Los resultados InBody registran '+ibLine.join(', ')+'.');
+    const reducidas=medidas.filter(m=>{const ini=parseFloat(m.ini),fin=parseFloat(m.fin);return !isNaN(ini)&&!isNaN(fin)&&(fin-ini)<-0.5;});
+    if(reducidas.length>0) lines.push('En medidas corporales, se registró reducción en: '+reducidas.map(m=>`${m.zona} (${(parseFloat(m.fin)-parseFloat(m.ini)).toFixed(1)} cm)`).join(', ')+'.');
+    if(cambios) lines.push(cambios);
+    lines.push('Los resultados obtenidos son consistentes con los objetivos planteados al inicio del ciclo. Se entrega el presente informe como registro clínico del proceso y se adjuntan las indicaciones de continuidad correspondientes.');
+  } else if(MODE==='medico'){
+    const productos=v('productos');
+    const zona=v('zona');
+    const dosis=v('dosis');
+    const medico=v('medico');
+    lines.push(`Se deja constancia del procedimiento médico estético realizado a ${nombre} en la sucursal La Dehesa de Sculpt Body Clinic.`);
+    if(productos) lines.push(`Procedimiento realizado: ${productos}.`);
+    if(zona) lines.push(`Zona(s) tratada(s): ${zona}.`);
+    if(dosis) lines.push(`Dosis / volumen aplicado: ${dosis}.`);
+    if(cambios) lines.push(cambios);
+    lines.push('El procedimiento se realizó sin complicaciones registradas. Se entregan las indicaciones post procedimiento correspondientes y se recomienda control según evolución.');
+    if(medico) lines.push(`Atendido por: ${medico}.`);
+  } else {
+    lines.push(`Al finalizar el ciclo de tratamiento facial, ${nombre} completó el protocolo establecido con resultados evaluados en la presente sesión de cierre.`);
+    if(equipo||sesiones){
+      let l='Se realizó';
+      if(equipo) l+=` ${equipo}`;
+      if(sesiones) l+=`, con ${sesiones}`;
+      lines.push(l+'.');
+    }
+    if(cambios) lines.push(cambios);
+    lines.push('La evaluación fotográfica comparativa y la valoración clínica evidencian cambios favorables en la calidad y apariencia de la piel, acordes al protocolo aplicado y a la etapa del tratamiento completada.');
+    lines.push('Se entrega el presente informe como registro clínico del ciclo y se adjuntan las indicaciones post tratamiento y de continuidad correspondientes.');
+  }
+  document.getElementById('conclusion').value=lines.join('\n\n');
+  save();
+}
+
+/* ══════════════════════════════════════════
+   PREVIEW / REPORT
+══════════════════════════════════════════ */
+function goToPreview(){
+  buildReport();
+  document.getElementById('formView').style.display='none';
+  document.getElementById('previewView').style.display='block';
+  window.scrollTo(0,0);
+}
+function showForm(){
+  document.getElementById('previewView').style.display='none';
+  document.getElementById('formView').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function buildReport(){
+  const nombre=v('nombre')||'Paciente';
+  const tel=v('telefono');
+  const fi=v('fechaInicio');
+  const ft=v('fechaTermino');
+  const tratante=v('tratante');
+  const mtrat=chk('mostrarTratante');
+  const suc=v('sucursal');
+  const msuc=chk('mostrarSuc');
+  const equipo=v('equipo');
+  const ses=v('sesiones');
+  const par=v('parametros');
+  const enf=v('enfoque');
+  const anal=v('analisis');
+  const cam=v('cambios');
+  const cont=v('continuidad');
+  const rec=v('recomendaciones');
+  const conc=v('conclusion');
+  const mfirma=chk('mostrarFirma');
+  const mcontacto=chk('mostrarContacto');
+  const today=new Date().toLocaleDateString('es-CL');
+  const tipoBadge=MODE==='corporal'?'Informe Corporal': MODE==='facial'?'Informe Facial':'Informe Médico · Inyectables';
+
+  // Tratamiento
+  const sesLabel=MODE==='corporal'?'Sesiones / Zona': MODE==='facial'?'Sesiones / Zona Facial':'N° Ficha / Folio';
+  const medico=v('medico');
+  const productos=v('productos');
+  const zona=v('zona');
+  const dosis=v('dosis');
+  const tecnica=v('tecnica');
+  const otros=v('otros');
+  const mconsentimiento=chk('consentimiento');
+
+  let tratItems=[];
+  if(MODE==='medico'){
+    tratItems=[
+      ses?`<div><span class="k">N° Ficha</span><span class="v">${ses}</span></div>`:'',
+      productos?`<div><span class="k">Procedimiento</span><span class="v">${productos}</span></div>`:'',
+      zona?`<div><span class="k">Zona tratada</span><span class="v">${zona}</span></div>`:'',
+      dosis?`<div><span class="k">Dosis / Volumen</span><span class="v">${dosis}</span></div>`:'',
+      tecnica?`<div><span class="k">Técnica</span><span class="v">${tecnica}</span></div>`:'',
+      otros?`<div><span class="k">Otros</span><span class="v">${otros}</span></div>`:'',
+      (mtrat&&medico)?`<div><span class="k">Médico Tratante</span><span class="v">${medico}</span></div>`:'',
+      (msuc&&suc)?`<div><span class="k">Sucursal</span><span class="v">${suc}</span></div>`:'',
+      mconsentimiento?`<div><span class="k">Consentimiento</span><span class="v" style="color:var(--green)">✓ Firmado</span></div>`:'',
+    ].filter(Boolean).join('');
+  } else {
+    tratItems=[
+      ses?`<div><span class="k">${sesLabel}</span><span class="v">${ses}</span></div>`:'',
+      equipo?`<div><span class="k">${MODE==='corporal'?'Equipo':'Tratamiento'}</span><span class="v">${equipo}</span></div>`:'',
+      par?`<div><span class="k">Parámetros</span><span class="v">${par}</span></div>`:'',
+      enf?`<div><span class="k">Objetivo</span><span class="v">${enf}</span></div>`:'',
+      (mtrat&&tratante)?`<div><span class="k">Tratante</span><span class="v">${tratante}</span></div>`:'',
+      (msuc&&suc)?`<div><span class="k">Sucursal</span><span class="v">${suc}</span></div>`:'',
+    ].filter(Boolean).join('');
+  }
+  tratItems = tratItems;
+
+  // Fotos
+  const fotosHTML=fotos.filter(g=>g.antes||g.despues).map(g=>`
+    <div style="margin-bottom:18px">
+      ${g.angulo?`<div class="ran">${g.angulo}</div>`:''}
+      <div class="rfg" style="grid-template-columns:${g.antes&&g.despues?'1fr 1fr':'1fr'}">
+        ${g.antes?`<div><div class="rfl" style="color:var(--t3)">ANTES</div><img src="${g.antes}"></div>`:''}
+        ${g.despues?`<div><div class="rfl" style="color:var(--green)">DESPUÉS</div><img src="${g.despues}"></div>`:''}
+      </div>
+    </div>`).join('');
+
+  // InBody (corporal only)
+  let ibSection='';
+  if(MODE==='corporal'){
+    const ibID=v('ibID');const ibFD=v('ibFD');
+    const ibIni=[...document.querySelectorAll('.ii')].map(x=>x.value);
+    const ibFin=[...document.querySelectorAll('.fi')].map(x=>x.value);
+    const ibNames=['Peso Total (kg)','Masa Muscular (kg)','Masa Grasa Corporal (kg)','Porcentaje de Grasa (%)','Nivel de Grasa Visceral'];
+    const hasIB=ibIni.some(x=>x)||ibFin.some(x=>x);
+    if(hasIB){
+      const ibRows=ibNames.map((n,i)=>{const m=ibMeta[i];const r=getDiff(ibIni[i],ibFin[i],m.inv,m.pct);return`<tr><td>${n}</td><td>${ibIni[i]||'—'}</td><td>${ibFin[i]||'—'}</td><td class="${r.c}">${r.t}</td></tr>`;}).join('');
+      ibSection+=`<div style="margin-bottom:22px"><div class="rl2">Resultados InBody</div><div class="rtw"><table class="rt"><thead><tr><th>Parámetro</th><th>Inicial</th><th>Final</th><th>Diferencia</th></tr></thead><tbody>${ibRows}</tbody></table></div></div>`;
+    }
+    if(ibID||ibFD){
+      ibSection+=`<div style="margin-bottom:20px"><div class="rl2">Exámenes InBody</div><div class="rfg" style="grid-template-columns:${ibID&&ibFD?'1fr 1fr':'1fr'}">
+        ${ibID?`<div><div class="rfl" style="color:var(--t3)">InBody Inicial</div><img src="${ibID}" style="width:100%;border-radius:10px;object-fit:contain;background:#111;max-height:260px"></div>`:''}
+        ${ibFD?`<div><div class="rfl" style="color:var(--green)">InBody Final</div><img src="${ibFD}" style="width:100%;border-radius:10px;object-fit:contain;background:#111;max-height:260px"></div>`:''}
+      </div></div>`;
+    }
+    const hasMed=medidas.some(m=>m.zona||m.ini||m.fin);
+    if(hasMed){
+      const mRows=medidas.map(m=>{const r=getMD(m.ini,m.fin);return`<tr><td>${m.zona||'—'}</td><td>${m.ini||'—'}</td><td>${m.fin||'—'}</td><td class="${r.c}">${r.t}</td></tr>`;}).join('');
+      ibSection+=`<div style="margin-bottom:22px"><div class="rl2">Medidas Corporales (cm)</div><div class="rtw"><table class="rt"><thead><tr><th>Zona</th><th>Inicial</th><th>Final</th><th>Diferencia</th></tr></thead><tbody>${mRows}</tbody></table></div></div>`;
+    }
+  }
+
+  const analLabel=MODE==='corporal'?'Análisis Comparativo': MODE==='facial'?'Análisis de Piel':'Observaciones Clínicas';
+  const satisfaccion = parseInt(v('satisfaccion')) || 0;
+  const starHTML = satisfaccion > 0 ? `<div style="margin-top:14px"><span style="font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase">Satisfacción del Paciente&nbsp;&nbsp;</span>${'★'.repeat(satisfaccion)+'☆'.repeat(5-satisfaccion)} <span style="font-size:11px;color:#c8a96e">${['','Muy insatisfecha','Insatisfecha','Neutral','Satisfecha','Muy satisfecha'][satisfaccion]} (${satisfaccion}/5)</span></div>` : '';
+  const contLabel=MODE==='corporal'?'Indicaciones de Continuidad': MODE==='facial'?'Indicaciones Post Tratamiento':'Indicaciones Post Procedimiento';
+  const recLabel='Recomendaciones Finales';
+
+  const doc=`
+    <div class="rh">
+      <div>
+        <div class="rh-badge">${tipoBadge}</div>
+        <img src="${LOGO}" style="height:46px;margin-top:6px">
+      </div>
+      <div class="rh-r">
+        <div class="rname">${nombre}</div>
+        <div class="rmeta">
+          ${fi?`Inicio: <span>${fi}</span>`:''}${fi&&ft?' · ':''}${ft?`Término: <span>${ft}</span>`:''}
+          ${(fi||ft)&&tel?'<br>':''}${tel?`<span>${tel}</span>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="rb">
+      ${tratItems?`<div class="rl2" style="margin-bottom:12px">${MODE==='corporal'?'Tratamiento Corporal': MODE==='facial'?'Tratamiento Facial':'Procedimiento Realizado'}</div><div class="rc"><div class="ri">${tratItems}</div></div>`:''}
+      ${fotosHTML?`<div style="margin-bottom:22px"><div class="rl2">Fotografías Comparativas</div>${fotosHTML}</div>`:''}
+      ${ibSection}
+      ${anal?`<div class="rl2">${analLabel}</div><div class="rc"><p class="rtxt">${anal}</p></div>`:'' }
+      ${cam?`<div class="rl2" style="margin-top:18px">Cambios Globales</div><div class="rc"><p class="rtxt">${cam}</p></div>`:''}
+      ${conc?`<div class="rl2" style="margin-top:18px">Conclusión Clínica</div><div class="rconc"><p class="rtxt">${conc}</p></div>`:''}
+      ${cont?`<div class="rl2" style="margin-top:18px">${contLabel}</div><div class="rc green"><p class="rtxt">${cont}</p></div>`:''}
+      ${rec?`<div class="rl2" style="margin-top:18px">${recLabel}</div><div class="rc"><p class="rtxt">${rec}</p></div>`:''}
+      ${mfirma?`<div class="rfirma"><div class="rfirma-box"><div class="rfirma-line">${MODE==='medico'?(mtrat&&medico?medico:'Médico Tratante'):(mtrat&&tratante?tratante:'Profesional Tratante')}</div><div style="font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase">Firma y timbre</div></div></div>`:''}
+
+      ${(()=>{
+        const sucData = SUCURSALES[suc];
+        if(mcontacto && sucData){
+          return `<div style="background:#0e0d0a;border:1px solid #2a2518;border-radius:12px;padding:20px 24px;margin-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+            <div>
+              <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Contáctanos</div>
+              <div style="font-size:12px;color:var(--t2);line-height:2">
+                <span style="color:var(--t3)">Sucursal</span> <strong style="color:var(--t1)">${suc}</strong><br>
+                <span style="color:var(--t3)">Dirección</span> <span>${sucData.direccion}</span><br>
+                <span style="color:var(--t3)">Teléfono / WhatsApp</span> <strong style="color:var(--t1)">${sucData.telefono}</strong>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Escanea para escribirnos</div>
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&color=c8a96e&bgcolor=0e0d0a&data=${encodeURIComponent(sucData.wsp)}" style="width:72px;height:72px;border-radius:8px" onerror="this.style.display='none'">
+            </div>
+          </div>`;
+        }
+        return '';
+      })()}
+
+      ${MODE==='medico'?`<div style="font-size:10px;color:#333;text-align:center;margin-top:20px;padding-top:14px;border-top:1px solid #1a1a1a;line-height:1.8">Este documento es de uso clínico interno · No reemplaza ficha médica oficial · Sculpt Body Clinic – Sucursal La Dehesa</div>`:''}
+      <div class="rfoot">
+        <img src="${LOGO}">
+        <div class="rfoot-r">${tipoBadge} · ${today}<br>Sculpt Body Clinic${suc&&msuc?' · '+suc:''}</div>
+      </div>
+    </div>`;
+
+  document.getElementById('reportDoc').innerHTML=doc;
+  document.getElementById('prevTitle').textContent=`${tipoBadge} – ${nombre}`;
+}
+
+/* ══════════════════════════════════════════
+   STARS
+══════════════════════════════════════════ */
+const STAR_LABELS = ['','Muy insatisfecha','Insatisfecha','Neutral','Satisfecha','Muy satisfecha'];
+function setStar(mode, val){
+  const el = document.getElementById('satisfaccion');
+  if(el) el.value = val;
+  const suffix = mode; // C, F, M
+  const container = document.getElementById('stars'+suffix);
+  const label = document.getElementById('starLabel'+suffix);
+  if(!container) return;
+  container.querySelectorAll('.star').forEach(s=>{
+    const sv = parseInt(s.dataset.v);
+    s.style.opacity = sv <= val ? '1' : '0.25';
+  });
+  if(label) label.textContent = val === 0 ? 'Sin registrar' : STAR_LABELS[val] + ' (' + val + '/5)';
+  save();
+}
+
+function loadStars(){
+  const val = parseInt(v('satisfaccion')) || 0;
+  if(!val) return;
+  const suffix = MODE==='corporal'?'C': MODE==='facial'?'F':'M';
+  setStar(suffix, val);
+}
+
+/* ══════════════════════════════════════════
+   DOWNLOAD PDF
+══════════════════════════════════════════ */
+async function downloadPDF(){
+  const btn = document.getElementById('btnPDF');
+  if(btn){ btn.textContent='Generando...'; btn.disabled=true; }
+
+  if(window.jsPDFfailed || window.h2cfailed || !window.jspdf || !window.html2canvas){
+    alert('Las librerías PDF no cargaron (sin conexión). Usa el botón Imprimir y selecciona "Guardar como PDF".');
+    if(btn){ btn.textContent='⬇ Descargar PDF'; btn.disabled=false; }
+    return;
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc_el = document.getElementById('reportDoc');
+    const canvas = await html2canvas(doc_el, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#080808',
+      logging: false
+    });
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const pdfW = pdf.internal.pageSize.getWidth();
+    const pdfH = pdf.internal.pageSize.getHeight();
+    const ratio = canvas.height / canvas.width;
+    const imgH = pdfW * ratio;
+    let posY = 0;
+    let remaining = imgH;
+    while(remaining > 0){
+      pdf.addImage(imgData,'JPEG', 0, -posY, pdfW, imgH, '', 'FAST');
+      remaining -= pdfH;
+      posY += pdfH;
+      if(remaining > 0) pdf.addPage();
+    }
+    const nombre = v('nombre') || 'Paciente';
+    const today = new Date().toLocaleDateString('es-CL').replace(/\//g,'-');
+    const tipo = MODE==='corporal'?'Corporal': MODE==='facial'?'Facial':'Medico';
+    pdf.save(`Informe_${tipo}_${nombre}_${today}.pdf`);
+  } catch(e){
+    alert('Error al generar PDF. Usa el botón Imprimir como alternativa.');
+    console.error(e);
+  }
+  if(btn){ btn.textContent='⬇ Descargar PDF'; btn.disabled=false; }
+}
+
+
+/* ══ SERVICE WORKER REGISTER ══ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(r=>console.log('SW OK'))
+      .catch(e=>console.log('SW error',e));
+  });
+}
+</script>
+</body>
+</html>

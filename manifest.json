@@ -1,0 +1,24 @@
+{
+  "name": "Sculpt Body Clinic – Informes",
+  "short_name": "Sculpt Clinic",
+  "description": "Sistema de Informes Clínicos Sculpt Body Clinic",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#080808",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
